@@ -1,11 +1,19 @@
-## Hey there 👋 I'm CTCycle, my pleasure to meet you!
+<h1 align="center">Hey there 👋 I'm CTCycle, it's a pleasure to meet you! </h1>
+
 I'm Thomas (aka CTCycle), an italian data science enthusiast with over 10 years of experience. My journey began with a passion for biotechnology, which led me to pursue a bachelor's degree in Biotechnology at the University of Genoa. Seeking further advancement, I completed a master's degree in Advanced Biotechnologies at the Vrije Universiteit of Brussel (VUB), where my academic career culminated in a PhD in Chemical Engineering at the Chemical Engineering and Industrial Chemistry Department at VUB. As part of the CheckPack project (https://pack4food.be/en/projects/checkpack), I developed micro-sensors for food spoilage detection and quality monitoring, honing my skills in independent research and collaboration with academic and industrial partners.
 
 During this time, I discovered my passion for data analysis and machine learning, which has driven my career ever since. I love diving into data to optimize chemical processes, advance renewable energy, and innovate in healthcare and drug design, turning complex data into actionable insights. However, despite all the experience I may have in data science, my adventure on GitHub is just starting. I am excited to immerse myself in this dynamic platform, share my projects, and collaborate with like-minded professionals. I look forward to contributing valuable insights and innovations, learning from others, and growing together within this exceptional network.
 
 Happy coding to everyone!
 
-![Thomas's GitHub stats](https://github-readme-stats.vercel.app/api?username=CTCycle&show_icons=true&theme=radical)
+##
+
+<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=CTCycle" alt="CTCycle" /></a> </p>
+
+ 
+![Thomas's GitHub stats](https://github-readme-stats.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green)
+
+##
 
 - 🔭 **What I'm working on?** I'm currently immersed in several Python projects. Feel free to browse my repositories to see the exciting work I've been doing!
 - 🌱 **What I'm learning?** right now, I'm expanding my programming skills by learning Java, one line of code at a time. I'm excited to delve into other languages and continue growing my skill set.
