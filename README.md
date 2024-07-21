@@ -1,10 +1,11 @@
-## Hey there 👋
-I'm Thomas, an italian data science enthusiast with over 10 years of experience. My journey began with a passion for biotechnology, which led me to pursue a bachelor's degree in Biotechnology at the University of Genoa. Seeking further advancement, I completed a master's degree in Advanced Biotechnologies at the Vrije Universiteit of Brussel (VUB), where my academic career culminated in a PhD in Chemical Engineering at the Chemical Engineering and Industrial Chemistry Department at VUB. As part of the CheckPack project (https://pack4food.be/en/projects/checkpack), I developed micro-sensors for food spoilage detection and quality monitoring, honing my skills in independent research and collaboration with academic and industrial partners.
+## Hey there 👋 I'm CTCycle, my pleasure to meet you!
+I'm Thomas (aka CTCycle), an italian data science enthusiast with over 10 years of experience. My journey began with a passion for biotechnology, which led me to pursue a bachelor's degree in Biotechnology at the University of Genoa. Seeking further advancement, I completed a master's degree in Advanced Biotechnologies at the Vrije Universiteit of Brussel (VUB), where my academic career culminated in a PhD in Chemical Engineering at the Chemical Engineering and Industrial Chemistry Department at VUB. As part of the CheckPack project (https://pack4food.be/en/projects/checkpack), I developed micro-sensors for food spoilage detection and quality monitoring, honing my skills in independent research and collaboration with academic and industrial partners.
 
 During this time, I discovered my passion for data analysis and machine learning, which has driven my career ever since. I love diving into data to optimize chemical processes, advance renewable energy, and innovate in healthcare and drug design, turning complex data into actionable insights. However, despite all the experience I may have in data science, my adventure on GitHub is just starting. I am excited to immerse myself in this dynamic platform, share my projects, and collaborate with like-minded professionals. I look forward to contributing valuable insights and innovations, learning from others, and growing together within this exceptional network.
 
 Happy coding to everyone!
 
+![Profile views](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Profile%20views&query=value&url=https://api.countapi.xyz/hit/CTCycle.CTCycle/visits)
 
 ![Thomas's GitHub stats](https://github-readme-stats.vercel.app/api?username=CTCycle&show_icons=true&theme=radical)
 
