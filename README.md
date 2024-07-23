@@ -1,4 +1,4 @@
-<h1 align="center">Hey there 👋 I'm CTCycle, it's a pleasure to meet you! </h1>
+<h1 align="center">👋 I'm CTCycle, welcome to my GitHub! 👋 </h1>
 
 I'm Thomas (aka CTCycle), an italian data science enthusiast with over 10 years of experience. My journey began with a passion for biotechnology, which led me to pursue a bachelor's degree in Biotechnology at the University of Genoa. Seeking further advancement, I completed a master's degree in Advanced Biotechnologies at the Vrije Universiteit of Brussel (VUB), where my academic career culminated in a PhD in Chemical Engineering at the Chemical Engineering and Industrial Chemistry Department at VUB. As part of the CheckPack project (https://pack4food.be/en/projects/checkpack), I developed micro-sensors for food spoilage detection and quality monitoring, honing my skills in independent research and collaboration with academic and industrial partners.
 
