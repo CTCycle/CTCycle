@@ -15,6 +15,11 @@ Happy coding to everyone!
 
 ##
 
+Skills and knowledge:
+![Python](https://img.shields.io/badge/python-3.10-blue)
+
+##
+
 - 🔭 **What I'm working on?** I'm currently immersed in several Python projects. Feel free to browse my repositories to see the exciting work I've been doing!
 - 🌱 **What I'm learning?** right now, I'm expanding my programming skills by learning Java, one line of code at a time. I'm excited to delve into other languages and continue growing my skill set.
 - 👯 **Collaborations? Why not!** I'm looking to collaborate on projects that intersect with my interests in biotechnology, chemistry, healthcare, and renewable energy. If you have an idea or project in mind, let's chat!
