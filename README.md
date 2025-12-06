@@ -10,7 +10,7 @@ Happy coding to all!
 <p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=CTCycle" alt="CTCycle" /></a> </p>
 
  
-![Thomas's GitHub stats](https://github-readme-stats.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green)
+![Thomas's GitHub stats]([https://github-readme-stats.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green](https://github-readme-stats-ctcycle.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green))
 
 ##
 
