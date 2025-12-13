@@ -7,7 +7,7 @@ I’m looking forward to connecting with this community, sharing my work, and le
 Happy coding to all!
 ##
 
-<p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=CTCycle" alt="CTCycle" /></a> </p>
+<a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy-plum-two.vercel.app/?username=CTCycle" alt="CTCycle" /></a>
 
  
 ![Thomas's GitHub stats](https://github-readme-stats-beta-ten-32.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green)
