@@ -7,9 +7,11 @@ I’m looking forward to connecting with this community, sharing my work, and le
 Happy coding to all!
 ##
 
+<!--
 <a href="https://github.com/CTCycle/github-profile-trophy">
   <img src="https://github-profile-trophy-fawn-psi.vercel.app/?username=CTCycle" alt="CTCycle" />
 </a>
+-->
 
  
 ![Thomas's GitHub stats](https://github-readme-stats-beta-ten-32.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green)
