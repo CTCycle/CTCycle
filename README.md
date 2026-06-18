@@ -7,11 +7,9 @@ I’m looking forward to connecting with this community, sharing my work, and le
 Happy coding to all!
 ##
 
-<!--
 <a href="https://github.com/CTCycle/github-profile-trophy">
   <img src="https://github-profile-trophy-fawn-psi.vercel.app/?username=CTCycle" alt="CTCycle" />
 </a>
--->
 
  
 ![Thomas's GitHub stats](https://github-readme-stats-beta-ten-32.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green)
@@ -41,5 +39,3 @@ Skills and tools:
 
 - 🔭 **What I'm working on?** I'm currently immersed in several Python projects. Feel free to browse my repositories to see the exciting work I've been doing!
 - 🌱 **What I'm learning?** right now, I'm expanding my programming skills by learning Java, one line of code at a time. I'm excited to delve into other languages and continue growing my skill set. I'd like to learn a bit more about front-end development too!
-- 👯 **Collaborations? Why not!** I'm looking to collaborate on projects that intersect with my interests in biotechnology, chemistry, healthcare, and renewable energy. If you have an idea or project in mind, let's chat!
-- 💬 **Ask me about** anything related to biotechnology, chemistry, healthcare, or more in general data science. Whether you're a fellow enthusiast or just curious, don't hesitate to reach out.
