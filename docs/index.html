@@ -1,0 +1,2210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Portfolio — CTCycle</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-hover: #1c2330;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --orange: #db6d28;
+    --divider: #21262d;
+    --card-radius: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    padding: 32px 24px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  .header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 24px; padding-bottom: 24px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .header svg { flex-shrink: 0; }
+  .header h1 { font-size: 24px; font-weight: 600; }
+  .header .meta { color: var(--text-muted); font-size: 14px; margin-top: 2px; }
+
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+    align-items: center;
+  }
+  #search {
+    flex: 1; min-width: 200px;
+    padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text); font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  #search:focus { border-color: var(--accent); }
+  #search::placeholder { color: var(--text-dim); }
+
+  .filter-group, .sort-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn, .sort-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-muted); font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover, .sort-btn:hover { border-color: var(--text-muted); color: var(--text); }
+  .filter-btn.active, .sort-btn.active {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+  .ctrl-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+
+  .stats-bar {
+    display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;
+    padding: 16px; background: var(--surface); border-radius: var(--card-radius);
+    border: 1px solid var(--border);
+  }
+  .stat { display: flex; flex-direction: column; }
+  .stat-value { font-size: 22px; font-weight: 600; }
+  .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .section { margin-bottom: 28px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .section-title { font-size: 18px; font-weight: 600; }
+  .section-count { font-size: 13px; color: var(--text-muted); background: var(--surface); padding: 2px 10px; border-radius: 12px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--card-radius); padding: 16px 20px;
+    margin-bottom: 8px; transition: border-color 0.2s, background 0.2s;
+  }
+  .card:hover { border-color: #484f58; background: var(--surface-hover); }
+  .card.hidden { display: none; }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 12px; margin-bottom: 8px;
+  }
+  .card-name {
+    font-size: 16px; font-weight: 600; color: var(--accent); text-decoration: none;
+  }
+  .card-name:hover { text-decoration: underline; }
+
+  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .badge-public { background: #1a3a2a; color: var(--green); border: 1px solid #2ea043; }
+  .badge-private { background: #1c2128; color: var(--text-muted); border: 1px solid var(--border); }
+  .badge-lang { color: #fff; }
+  .badge-ahead { background: #1a3a2a; color: var(--green); border: 1px solid #2ea043; }
+  .badge-behind { background: #3d1f1f; color: var(--red); border: 1px solid #da3633; }
+  .badge-tag { background: #1c2128; color: var(--yellow); border: 1px solid #7a5f0d; }
+  .badge-dirty { background: #3d2e0f; color: var(--yellow); border: 1px solid #bb8009; }
+  .badge-clean { background: #1a2a1a; color: var(--green); border: 1px solid #1f6f1f; }
+  .badge-remote { background: #1c1c2a; color: #a371f7; border: 1px solid #5a3d99; }
+  .badge-local-only { background: #2a1c1c; color: var(--orange); border: 1px solid #8b5a2b; }
+  .badge-stars { background: #1c2128; color: var(--yellow); border: 1px solid #7a5f0d; }
+
+  .card-desc {
+    color: var(--text-muted); font-size: 13px; margin-bottom: 10px; line-height: 1.4;
+  }
+  .card-details {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    font-size: 12px; color: var(--text-dim);
+  }
+  .card-details span { display: inline-flex; align-items: center; gap: 4px; }
+  .card-details a { color: var(--text-dim); text-decoration: none; }
+  .card-details a:hover { color: var(--accent); }
+
+  .branches-list {
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--divider);
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .branch-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 8px; border-radius: 4px;
+    background: #1c2128; border: 1px solid var(--border);
+    font-size: 11px; font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+  }
+  .branch-tag.current { border-color: var(--accent); color: var(--accent); }
+
+  .tech-tags {
+    margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .tech-tag {
+    padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 500;
+    background: #1c2128; color: var(--text-muted); border: 1px solid var(--border);
+  }
+
+  .no-results {
+    text-align: center; padding: 48px 0; color: var(--text-dim);
+    font-size: 16px;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 16px 12px; }
+    .stats-bar { flex-wrap: wrap; gap: 12px; }
+    .card-header { flex-direction: column; }
+    .controls { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="container" id="app">
+  <div class="header">
+    <svg width="40" height="40" viewBox="0 0 16 16" fill="white">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+    </svg>
+    <div>
+      <h1>GitHub Portfolio</h1>
+      <div class="meta">CTCycle &middot; <span id="total-repos">--</span> projects &middot; Updated <span id="update-date">--</span></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search by name, description, technology, language..." oninput="filterRepos()">
+    <div class="ctrl-sep"></div>
+    <div class="filter-group" id="filter-btns"></div>
+    <div class="ctrl-sep"></div>
+    <div class="sort-group">
+      <button class="sort-btn active" data-sort="group" onclick="setSort('group')">Group</button>
+      <button class="sort-btn" data-sort="name" onclick="setSort('name')">Name</button>
+      <button class="sort-btn" data-sort="stars" onclick="setSort('stars')">Stars</button>
+      <button class="sort-btn" data-sort="updated" onclick="setSort('updated')">Updated</button>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="stats-bar"></div>
+  <div id="sections"></div>
+</div>
+
+<script>
+const DATA = {
+"generated_at": "2026-07-10 00:06",
+"github_owner": "CTCycle",
+"total_repos": 18,
+"sources": {
+"local": 15,
+"local_only": 2,
+"remote_only": 1
+},
+"repos": [
+{
+"display_name": "ADSMOD Adsorption Modeling",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\ADSMOD Adsorption Modeling",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/ADSMOD-Adsorption-Modeling.git",
+"push": "https://github.com/CTCycle/ADSMOD-Adsorption-Modeling.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "c0b7c77",
+"message": "Refactor: Move common utilities to shared module"
+},
+"main": {
+"current": false,
+"sha": "e8394e8",
+"message": "Merge remote-tracking branch 'origin/main'"
+}
+},
+"last_commit": {
+"sha": "c0b7c77",
+"message": "Refactor: Move common utilities to shared module"
+},
+"last_tag": "v2.3.0",
+"last_fetch": "2026-07-09 14:31",
+"ahead": 6,
+"behind": 44,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 6,
+"conflict_count": 0
+},
+"file_count": 396,
+"commit_count": 551,
+"technologies": [
+"Unknown"
+],
+"readme_description": "ADSMOD is a comprehensive web application designed for the collection, management, and modeling of adsorption data. This project represents the evolution and unification of two predecessor projects: **ADSORFIT** and **NISTADS Adsorption Modeling** (the former name of this repository).",
+"gh_slug": "CTCycle/ADSMOD-Adsorption-Modeling",
+"gh": {
+"createdAt": "2023-09-29T07:44:02Z",
+"description": "Streamline adsorption modeling by automatically fitting theoretical adsorption models to empirical isotherm data and by training a machine learning model on adsorption isotherms from the NIST and ARPA-E databases to predict uptake as a function of pressure.",
+"forkCount": 1,
+"homepageUrl": "https://adsorption.nist.gov/isodb/index.php#home",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 752997,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 43886,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 1040,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 254261,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 78534,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 6678,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 19701,
+"node": {
+"name": "Rust"
+}
+},
+{
+"size": 1218,
+"node": {
+"name": "JavaScript"
+}
+}
+],
+"name": "ADSMOD-Adsorption-Modeling",
+"nameWithOwner": "CTCycle/ADSMOD-Adsorption-Modeling",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 3,
+"updatedAt": "2026-06-06T11:11:21Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "AEGIS Geospatial View",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\AEGIS Geospatial View",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/AEGIS-Geospatial-View.git",
+"push": "https://github.com/CTCycle/AEGIS-Geospatial-View.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "84b91d7",
+"message": "upgrade: Angular v19.2.25 -> v22.0.5 (sequential v19->v20->v21->v22)"
+},
+"main": {
+"current": false,
+"sha": "4ab1b3f",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "84b91d7",
+"message": "upgrade: Angular v19.2.25 -> v22.0.5 (sequential v19->v20->v21->v22)"
+},
+"last_tag": "",
+"last_fetch": "2026-07-08 10:06",
+"ahead": 9,
+"behind": 1,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 595,
+"commit_count": 555,
+"technologies": [
+"Unknown"
+],
+"readme_description": "AEGIS Geospatial View is a place-focused workspace built around conversation.",
+"gh_slug": "CTCycle/AEGIS-Geospatial-View",
+"gh": {
+"createdAt": "2025-10-10T08:09:11Z",
+"description": "Explore geospatial data through a dedicated web app that provides access to more than a thousand data sources.",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 1808795,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 47011,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 39331,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 53080,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 327036,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 4270,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 2548,
+"node": {
+"name": "JavaScript"
+}
+}
+],
+"name": "AEGIS-Geospatial-View",
+"nameWithOwner": "CTCycle/AEGIS-Geospatial-View",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T08:07:12Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "DILIGENT Clinical Copilot",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\DILIGENT Clinical Copilot",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/DILIGENT-Clinical-Copilot.git",
+"push": "https://github.com/CTCycle/DILIGENT-Clinical-Copilot.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "585605a8",
+"message": "Refactor: Remove unnecessary blank lines across multiple files for improved readability"
+},
+"latest-changes": {
+"current": false,
+"sha": "228a3346",
+"message": "[gone] Refactor JobState and JobManager for improved result handling and type consistency"
+},
+"main": {
+"current": false,
+"sha": "0fa75367",
+"message": "Restore packaged model resource directory"
+}
+},
+"last_commit": {
+"sha": "585605a8",
+"message": "Refactor: Remove unnecessary blank lines across multiple files for improved readability"
+},
+"last_tag": "v2.3.0",
+"last_fetch": "2026-07-09 17:04",
+"ahead": 0,
+"behind": 5,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 2,
+"staged_count": 1,
+"changed_count": 24,
+"conflict_count": 0
+},
+"file_count": 731,
+"commit_count": 1040,
+"technologies": [
+"Unknown"
+],
+"readme_description": "DILIGENT Clinical Copilot supports clinicians during Drug-Induced Liver Injury (DILI) evaluations with a FastAPI backend and an Angular + TypeScript frontend. It collects anamnesis, medications, and lab values, then coordinates clinical analysis with optional RAG support and session persistence f...",
+"gh_slug": "CTCycle/DILIGENT-Clinical-Copilot",
+"gh": {
+"createdAt": "2025-08-19T06:59:03Z",
+"description": "An AI-powered clinical copilot designed to assist physicians in detecting and managing Drug-Induced Liver Injury (DILI), leveraging the capabilities of large language models (LLMs).",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 2796125,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 45964,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 104637,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 268211,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 25616,
+"node": {
+"name": "Rust"
+}
+},
+{
+"size": 17648,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 6981,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 234045,
+"node": {
+"name": "SCSS"
+}
+}
+],
+"name": "DILIGENT-Clinical-Copilot",
+"nameWithOwner": "CTCycle/DILIGENT-Clinical-Copilot",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-06T16:57:29Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "FAIRS Roulette Player",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\FAIRS Roulette Player",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/FAIRS-Roulette-Player.git",
+"push": "https://github.com/CTCycle/FAIRS-Roulette-Player.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "647dff5",
+"message": "Fix develop CI badge and test runner setup"
+},
+"main": {
+"current": false,
+"sha": "40f8991",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "647dff5",
+"message": "Fix develop CI badge and test runner setup"
+},
+"last_tag": "v2.4.0",
+"last_fetch": "2026-07-08 10:06",
+"ahead": 6,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 2,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 193,
+"commit_count": 521,
+"technologies": [
+"Unknown"
+],
+"readme_description": "FAIRS is a research web application for roulette training and inference experiments. It includes: - A FastAPI backend for dataset ingestion, training orchestration, checkpoint management, inference sessions, and persistence. - A React + Vite frontend for training and inference workflows. - An opt...",
+"gh_slug": "CTCycle/FAIRS-Roulette-Player",
+"gh": {
+"createdAt": "2023-10-16T14:28:07Z",
+"description": "Learn to play roulette using Reinforcement Learning (RL) with a DQN agent",
+"forkCount": 0,
+"homepageUrl": "https://github.com/CTCycle/FAIRS-Roulette-Player",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 415849,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 47451,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 616,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 369,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 201700,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 44410,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 4835,
+"node": {
+"name": "PowerShell"
+}
+}
+],
+"name": "FAIRS-Roulette-Player",
+"nameWithOwner": "CTCycle/FAIRS-Roulette-Player",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 6,
+"updatedAt": "2026-07-09T22:04:33Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "LLMeter local benchmarks",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\LLMeter local benchmarks",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/LLMeter-local-benchmarks.git",
+"push": "https://github.com/CTCycle/LLMeter-local-benchmarks.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "6b8682a",
+"message": "Add develop CI badge"
+},
+"main": {
+"current": false,
+"sha": "6b8682a",
+"message": "Add develop CI badge"
+}
+},
+"last_commit": {
+"sha": "6b8682a",
+"message": "Add develop CI badge"
+},
+"last_tag": "",
+"last_fetch": "2026-07-08 10:05",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 84,
+"commit_count": 21,
+"technologies": [
+"Rust"
+],
+"readme_description": "LLMeter is a self-contained Rust CLI for benchmarking local OpenAI-compatible LLM providers. It targets local `/v1` endpoints such as Ollama, LM Studio, llama.cpp, and custom OpenAI-compatible servers, and it combines guided terminal flows with scriptable commands for repeatable benchmark runs.",
+"gh_slug": "CTCycle/LLMeter-local-benchmarks",
+"gh": {
+"createdAt": "2026-06-12T11:51:21Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 3494,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 383498,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "LLMeter-local-benchmarks",
+"nameWithOwner": "CTCycle/LLMeter-local-benchmarks",
+"primaryLanguage": {
+"name": "Rust"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T08:05:09Z",
+"visibility": "PRIVATE"
+},
+"open_prs": []
+},
+{
+"display_name": "PASTAPORTO mobile app",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\PASTAPORTO mobile app",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/PASTAPORTO.git",
+"push": "https://github.com/CTCycle/PASTAPORTO.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "f1c715c",
+"message": "refactor: Update UI/UX audit report and design tokens for improved consistency and accessibility"
+},
+"main": {
+"current": false,
+"sha": "fc909f1",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "f1c715c",
+"message": "refactor: Update UI/UX audit report and design tokens for improved consistency and accessibility"
+},
+"last_tag": "",
+"last_fetch": "2026-07-09 17:03",
+"ahead": 8,
+"behind": 1,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 7,
+"staged_count": 1,
+"changed_count": 16,
+"conflict_count": 2
+},
+"file_count": 359,
+"commit_count": 174,
+"technologies": [
+"Flutter"
+],
+"readme_description": "PASTAPORTO is a playful mobile passport for pasta lovers. It turns browsing pasta types into a small travel-like experience: you open a cover, flip through pages, discover different pasta entries, stamp the ones you have found, and keep track of your progress as you go.",
+"gh_slug": "CTCycle/PASTAPORTO",
+"gh": {
+"createdAt": "2025-12-10T19:50:18Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 123,
+"node": {
+"name": "Kotlin"
+}
+},
+{
+"size": 556171,
+"node": {
+"name": "Dart"
+}
+},
+{
+"size": 900,
+"node": {
+"name": "Swift"
+}
+},
+{
+"size": 38,
+"node": {
+"name": "Objective-C"
+}
+},
+{
+"size": 3095,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 3453,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 2656,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 4043,
+"node": {
+"name": "Shell"
+}
+},
+{
+"size": 7250,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 2276,
+"node": {
+"name": "PowerShell"
+}
+}
+],
+"name": "PASTAPORTO",
+"nameWithOwner": "CTCycle/PASTAPORTO",
+"primaryLanguage": {
+"name": "Dart"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T08:05:04Z",
+"visibility": "PRIVATE"
+},
+"open_prs": []
+},
+{
+"display_name": "ParaGraph LLM Workflow",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\ParaGraph LLM Workflow",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/ParaGraph-LLM-workflow.git",
+"push": "https://github.com/CTCycle/ParaGraph-LLM-workflow.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "92289ab",
+"message": "[ahead 1] Add MIT License"
+},
+"main": {
+"current": false,
+"sha": "6eb7f27",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "92289ab",
+"message": "Add MIT License"
+},
+"last_tag": "",
+"last_fetch": "2026-07-08 23:34",
+"ahead": 7,
+"behind": 1,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 1,
+"conflict_count": 0
+},
+"file_count": 439,
+"commit_count": 169,
+"technologies": [
+"Unknown"
+],
+"readme_description": "ParaGraph is a local application for planning, running, and observing LLM workflows in a visual way.",
+"gh_slug": "CTCycle/ParaGraph-LLM-workflow",
+"gh": {
+"createdAt": "2026-03-08T00:34:12Z",
+"description": "A graph-based web application inspired by ComfyUI, designed for creating custom LLM-powered workflows and nodes.",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 524,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 433660,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 66094,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 1034390,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 47637,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 4807,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 892,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 25860,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "ParaGraph-LLM-workflow",
+"nameWithOwner": "CTCycle/ParaGraph-LLM-workflow",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-09T22:04:30Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "PeriodIQ mobile app",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\PeriodIQ mobile app",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/PeriodIQ-mobile-app.git",
+"push": "https://github.com/CTCycle/PeriodIQ-mobile-app.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "ce91cdd",
+"message": "chore: update .gitignore to include additional Flutter/Dart and platform-specific files"
+},
+"main": {
+"current": false,
+"sha": "cce09a3",
+"message": "docs: update project overview link and add project index documentation"
+}
+},
+"last_commit": {
+"sha": "ce91cdd",
+"message": "chore: update .gitignore to include additional Flutter/Dart and platform-specific files"
+},
+"last_tag": "",
+"last_fetch": "2026-07-01 11:30",
+"ahead": 0,
+"behind": 1,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 272,
+"commit_count": 39,
+"technologies": [
+"Flutter"
+],
+"readme_description": "PeriodIQ is a mobile-first strategy game built around the periodic table. It is designed to feel like a game you can pick up quickly: you move through the table, manage a small set of resources, use cards to shape your turn, and try to build the strongest result before the match ends.",
+"gh_slug": "CTCycle/PeriodIQ-mobile-app",
+"gh": {
+"createdAt": "2026-03-04T22:19:28Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 1254,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 6203,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 1596,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 2388,
+"node": {
+"name": "Kotlin"
+}
+},
+{
+"size": 900,
+"node": {
+"name": "Swift"
+}
+},
+{
+"size": 38,
+"node": {
+"name": "Objective-C"
+}
+},
+{
+"size": 381062,
+"node": {
+"name": "Dart"
+}
+}
+],
+"name": "PeriodIQ-mobile-app",
+"nameWithOwner": "CTCycle/PeriodIQ-mobile-app",
+"primaryLanguage": {
+"name": "Dart"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-06-10T15:07:02Z",
+"visibility": "PRIVATE"
+},
+"open_prs": []
+},
+{
+"display_name": "TKBEN Benchmarker",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\TKBEN Benchmarker",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/TKBEN-tokenizers-benchmarker.git",
+"push": "https://github.com/CTCycle/TKBEN-tokenizers-benchmarker.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "80b6889",
+"message": "Disable setup-node cache on develop CI"
+},
+"main": {
+"current": false,
+"sha": "e996f2b",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "80b6889",
+"message": "Disable setup-node cache on develop CI"
+},
+"last_tag": "v3.5.0",
+"last_fetch": "2026-07-08 23:36",
+"ahead": 2,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 245,
+"commit_count": 380,
+"technologies": [
+"Unknown"
+],
+"readme_description": "TKBEN is a tokenizer benchmarking platform for text datasets and tokenizer assets.",
+"gh_slug": "CTCycle/TKBEN-tokenizers-benchmarker",
+"gh": {
+"createdAt": "2024-09-13T10:55:00Z",
+"description": "Explore and benchmark public and custom tokenizers from HuggingFace using different SOTA metrics",
+"forkCount": 1,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 777848,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 46107,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 636,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 406,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 57623,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 283740,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 4891,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 19215,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "TKBEN-tokenizers-benchmarker",
+"nameWithOwner": "CTCycle/TKBEN-tokenizers-benchmarker",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T21:36:15Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "WFLCAST Win4Life Prediction",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\WFLCAST Win4Life Prediction",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/WFL-forecast.git",
+"push": "https://github.com/CTCycle/WFL-forecast.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "f7bd28f",
+"message": "fix: Update .gitignore to include additional resource directories and clean up obsolete entries"
+},
+"main": {
+"current": false,
+"sha": "f7bd28f",
+"message": "fix: Update .gitignore to include additional resource directories and clean up obsolete entries"
+}
+},
+"last_commit": {
+"sha": "f7bd28f",
+"message": "fix: Update .gitignore to include additional resource directories and clean up obsolete entries"
+},
+"last_tag": "",
+"last_fetch": "2026-07-07 22:50",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 83,
+"commit_count": 176,
+"technologies": [
+"Python"
+],
+"readme_description": "WFLCast is a local Python CLI project for collecting Win for Life extraction history and running probabilistic forecasting experiments on the extraction contract:",
+"gh_slug": "CTCycle/WFL-forecast",
+"gh": {
+"createdAt": "2024-09-13T10:52:31Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 144639,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 2297,
+"node": {
+"name": "Batchfile"
+}
+}
+],
+"name": "WFL-forecast",
+"nameWithOwner": "CTCycle/WFL-forecast",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-07T20:51:06Z",
+"visibility": "PRIVATE"
+},
+"open_prs": []
+},
+{
+"display_name": "XREPORT Radiological Reports",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\XREPORT Radiological Reports",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/XREPORT-radiological-reports-generator.git",
+"push": "https://github.com/CTCycle/XREPORT-radiological-reports-generator.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "09fa44d",
+"message": "fix: update .gitignore to include assets/QA and app/server/uv.lock; revise last updated date in startup.md"
+},
+"main": {
+"current": false,
+"sha": "bf8a756",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "09fa44d",
+"message": "fix: update .gitignore to include assets/QA and app/server/uv.lock; revise last updated date in startup.md"
+},
+"last_tag": "v2.4.0",
+"last_fetch": "2026-07-07 22:50",
+"ahead": 3,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 238,
+"commit_count": 638,
+"technologies": [
+"Unknown"
+],
+"readme_description": "XREPORT is a client-server application that generates draft radiological reports from X-ray images. It combines a FastAPI backend and a React frontend to support end-to-end workflows for dataset preparation, model training, validation, and report generation.",
+"gh_slug": "CTCycle/XREPORT-radiological-reports-generator",
+"gh": {
+"createdAt": "2024-01-17T15:12:46Z",
+"description": "Automatic generation of descriptive radiological reports from X-RAY scans",
+"forkCount": 3,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 493316,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 46193,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 355,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 322356,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 92107,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 5024,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 2050,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 20045,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "XREPORT-radiological-reports-generator",
+"nameWithOwner": "CTCycle/XREPORT-radiological-reports-generator",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 6,
+"updatedAt": "2026-07-07T20:50:27Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "EOC analisi",
+"group": "Data Analysis",
+"local_path": "G:\\Projects\\Repositories\\Data analysis\\EOC analisi",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/EOC-analisi.git",
+"push": "https://github.com/CTCycle/EOC-analisi.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": false,
+"sha": "7e0bef3",
+"message": "updated notebooks"
+},
+"main": {
+"current": true,
+"sha": "b555628",
+"message": "modified styling of some plots"
+}
+},
+"last_commit": {
+"sha": "b555628",
+"message": "modified styling of some plots"
+},
+"last_tag": "",
+"last_fetch": "2025-12-04 09:12",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 2,
+"conflict_count": 0
+},
+"file_count": 4,
+"commit_count": 10,
+"technologies": [
+"Jupyter"
+],
+"readme_description": "",
+"gh_slug": "CTCycle/EOC-analisi",
+"gh": {
+"createdAt": "2025-11-04T10:47:08Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 1432496,
+"node": {
+"name": "Jupyter Notebook"
+}
+},
+{
+"size": 9784,
+"node": {
+"name": "Python"
+}
+}
+],
+"name": "EOC-analisi",
+"nameWithOwner": "CTCycle/EOC-analisi",
+"primaryLanguage": {
+"name": "Jupyter Notebook"
+},
+"stargazerCount": 0,
+"updatedAt": "2025-12-04T08:12:53Z",
+"visibility": "PRIVATE"
+},
+"open_prs": []
+},
+{
+"display_name": "Tesi Alice Farmacologia",
+"group": "Data Analysis",
+"local_path": "G:\\Projects\\Repositories\\Data analysis\\Tesi Alice Farmacologia",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/DIREU-rheumathology-study.git",
+"push": "https://github.com/CTCycle/DIREU-rheumathology-study.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "ee3991d",
+"message": "updated analysis workflow with some graphs"
+}
+},
+"last_commit": {
+"sha": "ee3991d",
+"message": "updated analysis workflow with some graphs"
+},
+"last_tag": "",
+"last_fetch": "2025-01-30 14:28",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 13,
+"commit_count": 30,
+"technologies": [
+"Jupyter"
+],
+"readme_description": "",
+"gh_slug": "CTCycle/DIREU-rheumathology-study",
+"gh": {
+"createdAt": "2024-10-31T13:52:11Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 124871,
+"node": {
+"name": "Jupyter Notebook"
+}
+},
+{
+"size": 357,
+"node": {
+"name": "Python"
+}
+}
+],
+"name": "DIREU-rheumathology-study",
+"nameWithOwner": "CTCycle/DIREU-rheumathology-study",
+"primaryLanguage": {
+"name": "Jupyter Notebook"
+},
+"stargazerCount": 0,
+"updatedAt": "2025-01-30T13:28:25Z",
+"visibility": "PRIVATE"
+},
+"open_prs": []
+},
+{
+"display_name": "EMADB Autopilot",
+"group": "Dismissed",
+"local_path": "G:\\Projects\\Repositories\\Dismissed projects\\EMADB Autopilot",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/EMADB-Autopilot.git",
+"push": "https://github.com/CTCycle/EMADB-Autopilot.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "554ada5",
+"message": "updated README"
+}
+},
+"last_commit": {
+"sha": "554ada5",
+"message": "updated README"
+},
+"last_tag": "v2.2.0",
+"last_fetch": "2025-12-24 09:54",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 10,
+"conflict_count": 0
+},
+"file_count": 35,
+"commit_count": 202,
+"technologies": [
+"Python"
+],
+"readme_description": "This project aims to develop a framework that autonomously navigates multiple drug-related online resources to retrieve data regarding drugs interactions and EMA drugs adverse reactions reports. Initially designed to browse the EMA database of EudraVigilance (European Database of suspected advers...",
+"gh_slug": "CTCycle/EMADB-Autopilot",
+"gh": {
+"createdAt": "2023-10-30T10:10:33Z",
+"description": "Automated browser to download drug adverse reaction reports from the European Database of Suspected Adverse Reactions Reports (EudraVigilance) ",
+"forkCount": 1,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 42108,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 11963,
+"node": {
+"name": "Batchfile"
+}
+}
+],
+"name": "EMADB-Autopilot",
+"nameWithOwner": "CTCycle/EMADB-Autopilot",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 6,
+"updatedAt": "2026-01-21T11:46:28Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "FeXT AutoEncoder",
+"group": "Dismissed",
+"local_path": "G:\\Projects\\Repositories\\Dismissed projects\\FeXT AutoEncoder",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/FEXT-Autoencoder.git",
+"push": "https://github.com/CTCycle/FEXT-Autoencoder.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "fdd8968",
+"message": "fixed python version in .bat file"
+},
+"main": {
+"current": false,
+"sha": "ff401c9",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "fdd8968",
+"message": "fixed python version in .bat file"
+},
+"last_tag": "",
+"last_fetch": "2025-12-30 09:26",
+"ahead": 36,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 22,
+"conflict_count": 0
+},
+"file_count": 56,
+"commit_count": 519,
+"technologies": [
+"Python"
+],
+"readme_description": "FeXT AutoEncoder is a desktop-first pipeline for inspecting image datasets, training convolutional autoencoders, exporting latent representations, and inspecting results without leaving a single UI. The application combines a PySide6 + Qt Material interface with a PyTorch/Triton-powered backend t...",
+"gh_slug": "CTCycle/FEXT-Autoencoder",
+"gh": {
+"createdAt": "2023-10-08T15:22:01Z",
+"description": "An autoencoder model to extract features from images and obtain their compressed vector representation, inspired by the convolutional VVG16 architecture",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 177747,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 11962,
+"node": {
+"name": "Batchfile"
+}
+}
+],
+"name": "FEXT-Autoencoder",
+"nameWithOwner": "CTCycle/FEXT-Autoencoder",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 1,
+"updatedAt": "2025-12-30T08:26:07Z",
+"visibility": "PUBLIC"
+},
+"open_prs": []
+},
+{
+"display_name": "CTCycle-profile",
+"group": "Repositories",
+"local_path": "G:\\Projects\\Repositories\\CTCycle-profile",
+"source": "local_only",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/CTCycle.git",
+"push": "https://github.com/CTCycle/CTCycle.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "383d5ad",
+"message": "Add CTCycle profile README with portfolio links"
+}
+},
+"last_commit": {
+"sha": "383d5ad",
+"message": "Add CTCycle profile README with portfolio links"
+},
+"last_tag": "",
+"last_fetch": "",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 1,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 1,
+"commit_count": 27,
+"technologies": [
+"Unknown"
+],
+"readme_description": "**ML researcher building clinical and scientific AI tools**",
+"gh_slug": "",
+"gh": {},
+"open_prs": []
+},
+{
+"display_name": "Python environments",
+"group": "Tools & Config",
+"local_path": "G:\\Projects\\Configurations\\Python environments",
+"source": "local_only",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/Python-environments.git",
+"push": "https://github.com/CTCycle/Python-environments.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "d264848",
+"message": "readded triton"
+}
+},
+"last_commit": {
+"sha": "d264848",
+"message": "readded triton"
+},
+"last_tag": "",
+"last_fetch": "2025-08-18 14:16",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 2,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 4
+},
+"file_count": 4,
+"commit_count": 11,
+"technologies": [
+"Unknown"
+],
+"readme_description": "",
+"gh_slug": "",
+"gh": {},
+"open_prs": []
+},
+{
+"display_name": "Prompt-collection-for-agent-coding",
+"group": "Remote Only",
+"local_path": "",
+"source": "remote_only",
+"gh_slug": "CTCycle/Prompt-collection-for-agent-coding",
+"gh": {
+"createdAt": "2026-04-19T21:21:08Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 192301,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 9963,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 29255,
+"node": {
+"name": "C#"
+}
+},
+{
+"size": 16469,
+"node": {
+"name": "Shell"
+}
+},
+{
+"size": 5060,
+"node": {
+"name": "Jupyter Notebook"
+}
+},
+{
+"size": 5006,
+"node": {
+"name": "Swift"
+}
+},
+{
+"size": 4947,
+"node": {
+"name": "PowerShell"
+}
+}
+],
+"name": "Prompt-collection-for-agent-coding",
+"nameWithOwner": "CTCycle/Prompt-collection-for-agent-coding",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-02T09:23:21Z",
+"visibility": "PRIVATE"
+},
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/Prompt-collection-for-agent-coding.git"
+}
+},
+"default_branch": "main",
+"branches": {},
+"last_commit": {},
+"last_tag": "",
+"last_fetch": "",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false
+},
+"file_count": 0,
+"commit_count": 0,
+"technologies": [
+"Python",
+"Python",
+"JavaScript",
+"C#",
+"Shell",
+"Jupyter Notebook",
+"Swift",
+"PowerShell"
+],
+"readme_description": "",
+"open_prs": []
+}
+]
+};
+
+let currentFilter = 'all';
+let currentSort = 'group';
+
+function init() {
+  document.getElementById('total-repos').textContent = DATA.total_repos;
+  document.getElementById('update-date').textContent = DATA.generated_at;
+
+  // Filter buttons
+  const groups = [...new Set(DATA.repos.map(r => r.group))];
+  const filterDiv = document.getElementById('filter-btns');
+  filterDiv.innerHTML = '<button class="filter-btn active" data-filter="all" onclick="setFilter(\'all\')">All</button>';
+  groups.forEach(g => {
+    const count = DATA.repos.filter(r => r.group === g).length;
+    filterDiv.innerHTML += '<button class="filter-btn" data-filter="' + g + '" onclick="setFilter(\'' + g + '\')">' + g + ' (' + count + ')</button>';
+  });
+  // Add source-based filters
+  filterDiv.innerHTML += '<button class="filter-btn" data-filter="pub" onclick="setFilter(\'pub\')">Public</button>';
+  filterDiv.innerHTML += '<button class="filter-btn" data-filter="dirty" onclick="setFilter(\'dirty\')">Dirty</button>';
+
+  renderStats();
+  renderSections();
+}
+
+function setFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.filter === filter);
+  });
+  filterRepos();
+}
+
+function setSort(sort) {
+  currentSort = sort;
+  document.querySelectorAll('.sort-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.sort === sort);
+  });
+  renderSections();
+}
+
+function filterRepos() {
+  const search = document.getElementById('search').value.toLowerCase();
+  document.querySelectorAll('.card').forEach(card => {
+    const group = card.dataset.group;
+    const text = card.dataset.search.toLowerCase();
+    const isPublic = card.dataset.public === 'true';
+    const isDirty = card.dataset.dirty === 'true';
+
+    let matchesFilter;
+    switch (currentFilter) {
+      case 'all': matchesFilter = true; break;
+      case 'pub': matchesFilter = isPublic; break;
+      case 'dirty': matchesFilter = isDirty; break;
+      default: matchesFilter = group === currentFilter;
+    }
+    const matchesSearch = !search || text.includes(search);
+    card.classList.toggle('hidden', !(matchesFilter && matchesSearch));
+  });
+  document.querySelectorAll('.section').forEach(section => {
+    const visible = section.querySelectorAll('.card:not(.hidden)').length > 0;
+    section.classList.toggle('hidden', !visible);
+  });
+}
+
+function renderStats() {
+  const bar = document.getElementById('stats-bar');
+  const total = DATA.total_repos;
+  const publicCount = DATA.repos.filter(r => {
+    const gh = r.gh || {};
+    return gh.visibility === 'PUBLIC';
+  }).length;
+  const privateCount = DATA.repos.filter(r => {
+    const gh = r.gh || {};
+    return gh.visibility === 'PRIVATE';
+  }).length;
+  const dirtyCount = DATA.repos.filter(r => {
+    const gs = r.git_status || {};
+    return gs.is_dirty;
+  }).length;
+  const allLangs = new Set();
+  DATA.repos.forEach(r => {
+    (r.technologies || []).forEach(t => allLangs.add(t));
+    const gh = r.gh || {};
+    if (gh.primaryLanguage && gh.primaryLanguage.name) allLangs.add(gh.primaryLanguage.name);
+  });
+  const totalStars = DATA.repos.reduce((sum, r) => {
+    const gh = r.gh || {};
+    return sum + (gh.stargazerCount || 0);
+  }, 0);
+  const totalFiles = DATA.repos.reduce((sum, r) => sum + (r.file_count || 0), 0);
+
+  bar.innerHTML =
+    '<div class="stat"><span class="stat-value">' + total + '</span><span class="stat-label">Total Projects</span></div>' +
+    '<div class="stat"><span class="stat-value">' + publicCount + '</span><span class="stat-label">Public</span></div>' +
+    '<div class="stat"><span class="stat-value">' + privateCount + '</span><span class="stat-label">Private</span></div>' +
+    '<div class="stat"><span class="stat-value">' + dirtyCount + '</span><span class="stat-label">Dirty</span></div>' +
+    '<div class="stat"><span class="stat-value">' + allLangs.size + '</span><span class="stat-label">Languages</span></div>' +
+    '<div class="stat"><span class="stat-value">' + totalStars + '</span><span class="stat-label">Stars</span></div>' +
+    '<div class="stat"><span class="stat-value">' + totalFiles.toLocaleString() + '</span><span class="stat-label">Tracked Files</span></div>';
+}
+
+function sortRepos(repos) {
+  switch (currentSort) {
+    case 'name':
+      return repos.sort((a, b) => a.display_name.localeCompare(b.display_name));
+    case 'stars':
+      return repos.sort((a, b) => ((b.gh || {}).stargazerCount || 0) - ((a.gh || {}).stargazerCount || 0));
+    case 'updated':
+      return repos.sort((a, b) => {
+        const da = (a.gh || {}).updatedAt || '';
+        const db = (b.gh || {}).updatedAt || '';
+        return db.localeCompare(da);
+      });
+    case 'group':
+    default:
+      return repos;  // keep group order
+  }
+}
+
+function renderSections() {
+  const container = document.getElementById('sections');
+  const groups = ['Active', 'Data Analysis', 'Dismissed', 'Tools & Config', 'Remote Only'];
+
+  if (currentSort !== 'group') {
+    // Flat layout when sorting
+    const repos = sortRepos([...DATA.repos]);
+    let html = '<div class="section"><div class="section-header"><span class="section-title">All Projects</span></div>';
+    repos.forEach(r => { html += renderCard(r); });
+    html += '</div>';
+    container.innerHTML = html;
+    return;
+  }
+
+  let html = '';
+  groups.forEach(group => {
+    const repos = sortRepos(DATA.repos.filter(r => r.group === group));
+    if (repos.length === 0) return;
+
+    html += '<div class="section">' +
+      '<div class="section-header">' +
+        '<span class="section-title">' + group + '</span>' +
+        '<span class="section-count">' + repos.length + '</span>' +
+      '</div>';
+    repos.forEach(r => { html += renderCard(r); });
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function renderCard(r) {
+  const gh = r.gh || {};
+  const visibility = gh.visibility || 'unknown';
+  const lang = gh.primaryLanguage || {};
+  const langName = lang.name || '';
+  const langColor = LANG_COLORS[langName] || '#8b949e';
+  const desc = r.readme_description || gh.description || '';
+  const ghUrl = r.gh_slug ? 'https://github.com/' + r.gh_slug : '';
+  const localUrl = r.local_path ? 'file:///' + r.local_path.replace(/\\\\/g, '/').replace(/\\/g, '/').replace(/^([A-Z]):/, (_, d) => d.toLowerCase()) + '/' : '';
+  const updatedAt = gh.updatedAt ? gh.updatedAt.split('T')[0] : '';
+  const stars = gh.stargazerCount || 0;
+  const forks = gh.forkCount || 0;
+  const gs = r.git_status || {};
+  const isDirty = gs.is_dirty || false;
+  const technologies = r.technologies || [];
+  const sourceBadge = r.source === 'remote_only' ? 'remote' : (r.source === 'local_only' ? 'local-only' : '');
+
+  // Build searchable text
+  const searchText = [r.display_name, desc, langName, r.group, r.gh_slug]
+    .concat(technologies).filter(Boolean).join(' ').toLowerCase();
+
+  let html = '<div class="card" data-group="' + r.group + '" data-search="' + escAttr(searchText) +
+    '" data-public="' + (visibility === 'PUBLIC') + '" data-dirty="' + isDirty + '">';
+
+  // Header row
+  html += '<div class="card-header">';
+  html += '<a class="card-name" href="' + (ghUrl || '#') + '" target="_blank" title="Open on GitHub">' + r.display_name + '</a>';
+  html += '<div class="card-badges">';
+
+  // Source badge
+  if (sourceBadge === 'remote') {
+    html += '<span class="badge badge-remote">Remote only</span>';
+  } else if (sourceBadge === 'local-only') {
+    html += '<span class="badge badge-local-only">Local only</span>';
+  }
+
+  // Visibility
+  if (visibility === 'PUBLIC') {
+    html += '<span class="badge badge-public">Public</span>';
+  } else if (visibility === 'PRIVATE') {
+    html += '<span class="badge badge-private">Private</span>';
+  }
+
+  // Language
+  if (langName) {
+    html += '<span class="badge badge-lang" style="background:' + langColor + '">' + langName + '</span>';
+  }
+
+  // Tag
+  if (r.last_tag) {
+    html += '<span class="badge badge-tag">' + r.last_tag + '</span>';
+  }
+
+  // Stars
+  if (stars > 0) {
+    html += '<span class="badge badge-stars">' + stars + ' star' + (stars !== 1 ? 's' : '') + '</span>';
+  }
+
+  // Ahead / behind
+  if (r.ahead > 0) {
+    html += '<span class="badge badge-ahead">+' + r.ahead + ' ahead</span>';
+  }
+  if (r.behind > 0) {
+    html += '<span class="badge badge-behind">-' + r.behind + ' behind</span>';
+  }
+
+  // Dirty / clean
+  if (r.source !== 'remote_only') {
+    if (isDirty) {
+      html += '<span class="badge badge-dirty">Dirty</span>';
+    } else {
+      html += '<span class="badge badge-clean">Clean</span>';
+    }
+  }
+
+  html += '</div></div>';
+
+  // Description
+  if (desc) {
+    html += '<div class="card-desc">' + escHtml(desc) + '</div>';
+  }
+
+  // Details row
+  html += '<div class="card-details">';
+  if (ghUrl) {
+    html += '<span><a href="' + ghUrl + '" target="_blank">' + r.gh_slug + '</a></span>';
+  }
+  if (updatedAt) {
+    html += '<span>Updated ' + updatedAt + '</span>';
+  }
+  if (forks > 0) {
+    html += '<span>' + forks + ' fork' + (forks !== 1 ? 's' : '') + '</span>';
+  }
+  if (r.last_commit && r.last_commit.sha) {
+    html += '<span>Last: ' + r.last_commit.sha.substring(0, 7) + ' ' + escHtml(r.last_commit.message || '').substring(0, 60) + '</span>';
+  }
+  if (r.file_count > 0) {
+    html += '<span>' + r.file_count.toLocaleString() + ' files</span>';
+  }
+  if (r.commit_count > 0) {
+    html += '<span>' + r.commit_count + ' commits</span>';
+  }
+  if (r.last_fetch) {
+    html += '<span>Fetched ' + r.last_fetch + '</span>';
+  }
+  if (localUrl) {
+    html += '<span><a href="' + localUrl + '" target="_blank">Open folder</a></span>';
+  }
+  html += '</div>';
+
+  // Technologies
+  if (technologies.length > 0) {
+    html += '<div class="tech-tags">';
+    technologies.forEach(t => {
+      html += '<span class="tech-tag">' + t + '</span>';
+    });
+    html += '</div>';
+  }
+
+  // Branches
+  const branchNames = Object.keys(r.branches || {});
+  if (branchNames.length > 0) {
+    html += '<div class="branches-list">';
+    branchNames.forEach(b => {
+      const br = r.branches[b];
+      const cls = br.current ? 'branch-tag current' : 'branch-tag';
+      html += '<span class="' + cls + '">' + b + '</span>';
+    });
+    html += '</div>';
+  }
+
+  // Open PRs
+  const prs = r.open_prs || [];
+  if (prs.length > 0) {
+    html += '<div class="branches-list" style="margin-top:4px;padding-top:4px;">';
+    prs.forEach(pr => {
+      html += '<span class="branch-tag" style="color:var(--green);border-color:#2ea043;">' +
+        '<a href="' + ghUrl + '/pull/' + pr.number + '" target="_blank" style="color:inherit;text-decoration:none;">PR #' +
+        pr.number + ': ' + escHtml(pr.title) + '</a></span>';
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function escAttr(s) {
+  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+const LANG_COLORS = {
+"Python": "#3572A5",
+"Jupyter Notebook": "#DA5B0B",
+"Jupyter": "#DA5B0B",
+"Rust": "#DEA584",
+"Dart": "#00B4AB",
+"Flutter": "#00B4AB",
+"TypeScript": "#3178C6",
+"JavaScript": "#F7DF1E",
+"HTML": "#E34F26",
+"CSS": "#563D7C",
+"Shell": "#89E051",
+"C": "#555555",
+"C++": "#F34B7D",
+"Go": "#00ADD8",
+"Ruby": "#701516",
+"R": "#198CE7",
+"Java": "#B07219",
+"Kotlin": "#A97BFF",
+"Swift": "#F05138",
+"PHP": "#4F5D95",
+"Docker": "#2496ED",
+"Node.js": "#339933",
+"Batchfile": "#C1F12E",
+"Unknown": "#8b949e"
+};
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,2289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3D Portfolio — CTCycle</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{overflow:hidden;background:#05080f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+
+  #dashboard{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);
+    width:min(680px,96vw);max-height:74vh;overflow-y:auto;
+    background:rgba(13,17,23,0.95);border:1px solid #30363d;border-bottom:none;
+    border-radius:14px 14px 0 0;padding:24px 28px 28px;color:#e6edf3;z-index:20;
+    transition:transform .4s cubic-bezier(.16,1,.3,1);
+    box-shadow:0 -12px 48px rgba(0,0,0,.7);backdrop-filter:blur(12px);
+  }
+  #dashboard.open{transform:translateX(-50%) translateY(0)}
+  #dash-close{position:absolute;top:14px;right:18px;background:none;border:none;color:#6e7681;font-size:22px;cursor:pointer;padding:4px 10px;border-radius:6px}
+  #dash-close:hover{color:#e6edf3;background:#21262d}
+  .dash-title{font-size:20px;font-weight:700;color:#58a6ff;margin-bottom:2px}
+  .dash-group{font-size:11px;color:#484f58;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  .dash-desc{font-size:13px;color:#8b949e;line-height:1.5;margin-bottom:14px}
+  .dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin-bottom:14px}
+  .dstat{background:#161b22;border:1px solid #21262d;border-radius:8px;padding:12px 14px;text-align:center}
+  .dstat-val{font-size:22px;font-weight:700;color:#e6edf3}
+  .dstat-label{font-size:11px;color:#484f58;text-transform:uppercase;margin-top:2px;letter-spacing:.3px}
+  .dash-badges{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+  .dbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:14px;font-size:11px;font-weight:500}
+  .dbadge-public{background:#1a3a2a;color:#3fb950;border:1px solid #2ea043}
+  .dbadge-private{background:#1c2128;color:#8b949e;border:1px solid #30363d}
+  .dbadge-dirty{background:#3d2e0f;color:#d29922;border:1px solid #bb8009}
+  .dbadge-clean{background:#1a2a1a;color:#3fb950;border:1px solid #1f6f1f}
+  .dbadge-lang{color:#fff;border:1px solid rgba(255,255,255,.1)}
+  .dbadge-tech{background:#1c2128;color:#6e7681;border:1px solid #21262d}
+  .dash-branches{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+  .dbranch{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:5px;background:#161b22;border:1px solid #21262d;font-family:'SF Mono','Cascadia Code',monospace;font-size:11px}
+  .dbranch.current{border-color:#58a6ff;color:#58a6ff}
+  .dash-links{display:flex;gap:10px;flex-wrap:wrap}
+  .dlink{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border-radius:7px;font-size:12px;font-weight:500;text-decoration:none}
+  .dlink-gh{background:#21262d;color:#58a6ff;border:1px solid #30363d}.dlink-gh:hover{background:#30363d}
+  .dlink-folder{background:#21262d;color:#8b949e;border:1px solid #30363d}.dlink-folder:hover{background:#30363d;color:#e6edf3}
+
+  #hud{position:fixed;top:20px;left:20px;z-index:5;pointer-events:none;color:#6e7681;font-size:13px}
+  #hud h1{font-size:18px;color:#e6edf3;margin-bottom:4px;font-weight:600}
+  #legend{position:fixed;bottom:24px;right:24px;z-index:5;display:flex;flex-direction:column;gap:4px}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:11px;color:#6e7681}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  #loading{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#05080f;color:#6e7681;font-size:15px;transition:opacity .5s}
+  #loading.done{opacity:0;pointer-events:none}
+  .spinner{width:32px;height:32px;border:3px solid #21262d;border-top-color:#58a6ff;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:600px){#dashboard{padding:16px 18px 20px}.dash-stats{grid-template-columns:repeat(3,1fr);gap:6px}.dstat{padding:8px 10px}.dstat-val{font-size:18px}}
+</style>
+</head>
+<body>
+<div id="loading"><div class="spinner"></div>Loading 3D Portfolio…</div>
+<div id="hud"><h1>CTCycle · 3D Portfolio</h1><span id="hud-count">--</span> projects · drag orbit · scroll zoom · click island</div>
+<div id="legend"></div>
+<div id="dashboard">
+  <button id="dash-close">✕</button>
+  <div class="dash-title" id="dash-title"></div><div class="dash-group" id="dash-group"></div>
+  <div class="dash-desc" id="dash-desc"></div>
+  <div class="dash-stats" id="dash-stats"></div>
+  <div class="dash-badges" id="dash-badges"></div>
+  <div class="dash-branches" id="dash-branches"></div>
+  <div class="dash-links" id="dash-links"></div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const DATA={
+"generated_at": "2026-07-10 00:06",
+"github_owner": "CTCycle",
+"total_repos": 18,
+"sources": {
+"local": 15,
+"local_only": 2,
+"remote_only": 1
+},
+"repos": [
+{
+"display_name": "ADSMOD Adsorption Modeling",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\ADSMOD Adsorption Modeling",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/ADSMOD-Adsorption-Modeling.git",
+"push": "https://github.com/CTCycle/ADSMOD-Adsorption-Modeling.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "c0b7c77",
+"message": "Refactor: Move common utilities to shared module"
+},
+"main": {
+"current": false,
+"sha": "e8394e8",
+"message": "Merge remote-tracking branch 'origin/main'"
+}
+},
+"last_commit": {
+"sha": "c0b7c77",
+"message": "Refactor: Move common utilities to shared module"
+},
+"last_tag": "v2.3.0",
+"last_fetch": "2026-07-09 14:31",
+"ahead": 6,
+"behind": 44,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 6,
+"conflict_count": 0
+},
+"file_count": 396,
+"commit_count": 551,
+"technologies": [
+"Unknown"
+],
+"readme_description": "ADSMOD is a comprehensive web application designed for the collection, management, and modeling of adsorption data. This project represents the evolution and unification of two predecessor projects: **ADSORFIT** and **NISTADS Adsorption Modeling** (the former name of this repository).",
+"gh_slug": "CTCycle/ADSMOD-Adsorption-Modeling",
+"gh": {
+"createdAt": "2023-09-29T07:44:02Z",
+"description": "Streamline adsorption modeling by automatically fitting theoretical adsorption models to empirical isotherm data and by training a machine learning model on adsorption isotherms from the NIST and ARPA-E databases to predict uptake as a function of pressure.",
+"forkCount": 1,
+"homepageUrl": "https://adsorption.nist.gov/isodb/index.php#home",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 752997,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 43886,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 1040,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 254261,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 78534,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 6678,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 19701,
+"node": {
+"name": "Rust"
+}
+},
+{
+"size": 1218,
+"node": {
+"name": "JavaScript"
+}
+}
+],
+"name": "ADSMOD-Adsorption-Modeling",
+"nameWithOwner": "CTCycle/ADSMOD-Adsorption-Modeling",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 3,
+"updatedAt": "2026-06-06T11:11:21Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Machine Learning",
+"_shape": "lattice",
+"_nebula": 1714749,
+"_x": 21.5,
+"_y": 1.5,
+"_z": 0.0
+},
+{
+"display_name": "FAIRS Roulette Player",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\FAIRS Roulette Player",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/FAIRS-Roulette-Player.git",
+"push": "https://github.com/CTCycle/FAIRS-Roulette-Player.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "647dff5",
+"message": "Fix develop CI badge and test runner setup"
+},
+"main": {
+"current": false,
+"sha": "40f8991",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "647dff5",
+"message": "Fix develop CI badge and test runner setup"
+},
+"last_tag": "v2.4.0",
+"last_fetch": "2026-07-08 10:06",
+"ahead": 6,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 2,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 193,
+"commit_count": 521,
+"technologies": [
+"Unknown"
+],
+"readme_description": "FAIRS is a research web application for roulette training and inference experiments. It includes: - A FastAPI backend for dataset ingestion, training orchestration, checkpoint management, inference sessions, and persistence. - A React + Vite frontend for training and inference workflows. - An opt...",
+"gh_slug": "CTCycle/FAIRS-Roulette-Player",
+"gh": {
+"createdAt": "2023-10-16T14:28:07Z",
+"description": "Learn to play roulette using Reinforcement Learning (RL) with a DQN agent",
+"forkCount": 0,
+"homepageUrl": "https://github.com/CTCycle/FAIRS-Roulette-Player",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 415849,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 47451,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 616,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 369,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 201700,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 44410,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 4835,
+"node": {
+"name": "PowerShell"
+}
+}
+],
+"name": "FAIRS-Roulette-Player",
+"nameWithOwner": "CTCycle/FAIRS-Roulette-Player",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 6,
+"updatedAt": "2026-07-09T22:04:33Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Machine Learning",
+"_shape": "roulette",
+"_nebula": 4004367,
+"_x": 21.857,
+"_y": 3.3,
+"_z": 0.401
+},
+{
+"display_name": "EMADB Autopilot",
+"group": "Dismissed",
+"local_path": "G:\\Projects\\Repositories\\Dismissed projects\\EMADB Autopilot",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/EMADB-Autopilot.git",
+"push": "https://github.com/CTCycle/EMADB-Autopilot.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "554ada5",
+"message": "updated README"
+}
+},
+"last_commit": {
+"sha": "554ada5",
+"message": "updated README"
+},
+"last_tag": "v2.2.0",
+"last_fetch": "2025-12-24 09:54",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 10,
+"conflict_count": 0
+},
+"file_count": 35,
+"commit_count": 202,
+"technologies": [
+"Python"
+],
+"readme_description": "This project aims to develop a framework that autonomously navigates multiple drug-related online resources to retrieve data regarding drugs interactions and EMA drugs adverse reactions reports. Initially designed to browse the EMA database of EudraVigilance (European Database of suspected advers...",
+"gh_slug": "CTCycle/EMADB-Autopilot",
+"gh": {
+"createdAt": "2023-10-30T10:10:33Z",
+"description": "Automated browser to download drug adverse reaction reports from the European Database of Suspected Adverse Reactions Reports (EudraVigilance) ",
+"forkCount": 1,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 42108,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 11963,
+"node": {
+"name": "Batchfile"
+}
+}
+],
+"name": "EMADB-Autopilot",
+"nameWithOwner": "CTCycle/EMADB-Autopilot",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 6,
+"updatedAt": "2026-01-21T11:46:28Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Machine Learning",
+"_shape": "spider",
+"_nebula": 2759194,
+"_x": 22.095,
+"_y": 3.6,
+"_z": 0.948
+},
+{
+"display_name": "FeXT AutoEncoder",
+"group": "Dismissed",
+"local_path": "G:\\Projects\\Repositories\\Dismissed projects\\FeXT AutoEncoder",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/FEXT-Autoencoder.git",
+"push": "https://github.com/CTCycle/FEXT-Autoencoder.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "fdd8968",
+"message": "fixed python version in .bat file"
+},
+"main": {
+"current": false,
+"sha": "ff401c9",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "fdd8968",
+"message": "fixed python version in .bat file"
+},
+"last_tag": "",
+"last_fetch": "2025-12-30 09:26",
+"ahead": 36,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 22,
+"conflict_count": 0
+},
+"file_count": 56,
+"commit_count": 519,
+"technologies": [
+"Python"
+],
+"readme_description": "FeXT AutoEncoder is a desktop-first pipeline for inspecting image datasets, training convolutional autoencoders, exporting latent representations, and inspecting results without leaving a single UI. The application combines a PySide6 + Qt Material interface with a PyTorch/Triton-powered backend t...",
+"gh_slug": "CTCycle/FEXT-Autoencoder",
+"gh": {
+"createdAt": "2023-10-08T15:22:01Z",
+"description": "An autoencoder model to extract features from images and obtain their compressed vector representation, inspired by the convolutional VVG16 architecture",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 177747,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 11962,
+"node": {
+"name": "Batchfile"
+}
+}
+],
+"name": "FEXT-Autoencoder",
+"nameWithOwner": "CTCycle/FEXT-Autoencoder",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 1,
+"updatedAt": "2025-12-30T08:26:07Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Machine Learning",
+"_shape": "hourglass",
+"_nebula": 1714730,
+"_x": 22.17,
+"_y": 1.4,
+"_z": 1.607
+},
+{
+"display_name": "LLMeter local benchmarks",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\LLMeter local benchmarks",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/LLMeter-local-benchmarks.git",
+"push": "https://github.com/CTCycle/LLMeter-local-benchmarks.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "6b8682a",
+"message": "Add develop CI badge"
+},
+"main": {
+"current": false,
+"sha": "6b8682a",
+"message": "Add develop CI badge"
+}
+},
+"last_commit": {
+"sha": "6b8682a",
+"message": "Add develop CI badge"
+},
+"last_tag": "",
+"last_fetch": "2026-07-08 10:05",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 84,
+"commit_count": 21,
+"technologies": [
+"Rust"
+],
+"readme_description": "LLMeter is a self-contained Rust CLI for benchmarking local OpenAI-compatible LLM providers. It targets local `/v1` endpoints such as Ollama, LM Studio, llama.cpp, and custom OpenAI-compatible servers, and it combines guided terminal flows with scriptable commands for repeatable benchmark runs.",
+"gh_slug": "CTCycle/LLMeter-local-benchmarks",
+"gh": {
+"createdAt": "2026-06-12T11:51:21Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 3494,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 383498,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "LLMeter-local-benchmarks",
+"nameWithOwner": "CTCycle/LLMeter-local-benchmarks",
+"primaryLanguage": {
+"name": "Rust"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T08:05:09Z",
+"visibility": "PRIVATE"
+},
+"open_prs": [],
+"_group": "LLM & Tools",
+"_shape": "crystal",
+"_nebula": 2759210,
+"_x": 13.405,
+"_y": 0.0,
+"_z": 16.809
+},
+{
+"display_name": "ParaGraph LLM Workflow",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\ParaGraph LLM Workflow",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/ParaGraph-LLM-workflow.git",
+"push": "https://github.com/CTCycle/ParaGraph-LLM-workflow.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "92289ab",
+"message": "[ahead 1] Add MIT License"
+},
+"main": {
+"current": false,
+"sha": "6eb7f27",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "92289ab",
+"message": "Add MIT License"
+},
+"last_tag": "",
+"last_fetch": "2026-07-08 23:34",
+"ahead": 7,
+"behind": 1,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 1,
+"conflict_count": 0
+},
+"file_count": 439,
+"commit_count": 169,
+"technologies": [
+"Unknown"
+],
+"readme_description": "ParaGraph is a local application for planning, running, and observing LLM workflows in a visual way.",
+"gh_slug": "CTCycle/ParaGraph-LLM-workflow",
+"gh": {
+"createdAt": "2026-03-08T00:34:12Z",
+"description": "A graph-based web application inspired by ComfyUI, designed for creating custom LLM-powered workflows and nodes.",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 524,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 433660,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 66094,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 1034390,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 47637,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 4807,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 892,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 25860,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "ParaGraph-LLM-workflow",
+"nameWithOwner": "CTCycle/ParaGraph-LLM-workflow",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-09T22:04:30Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "LLM & Tools",
+"_shape": "nodegraph",
+"_nebula": 1719578,
+"_x": 13.314,
+"_y": 0.3,
+"_z": 17.339
+},
+{
+"display_name": "TKBEN Benchmarker",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\TKBEN Benchmarker",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/TKBEN-tokenizers-benchmarker.git",
+"push": "https://github.com/CTCycle/TKBEN-tokenizers-benchmarker.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "80b6889",
+"message": "Disable setup-node cache on develop CI"
+},
+"main": {
+"current": false,
+"sha": "e996f2b",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "80b6889",
+"message": "Disable setup-node cache on develop CI"
+},
+"last_tag": "v3.5.0",
+"last_fetch": "2026-07-08 23:36",
+"ahead": 2,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 245,
+"commit_count": 380,
+"technologies": [
+"Unknown"
+],
+"readme_description": "TKBEN is a tokenizer benchmarking platform for text datasets and tokenizer assets.",
+"gh_slug": "CTCycle/TKBEN-tokenizers-benchmarker",
+"gh": {
+"createdAt": "2024-09-13T10:55:00Z",
+"description": "Explore and benchmark public and custom tokenizers from HuggingFace using different SOTA metrics",
+"forkCount": 1,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 777848,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 46107,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 636,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 406,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 57623,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 283740,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 4891,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 19215,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "TKBEN-tokenizers-benchmarker",
+"nameWithOwner": "CTCycle/TKBEN-tokenizers-benchmarker",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T21:36:15Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "LLM & Tools",
+"_shape": "gauge",
+"_nebula": 1710653,
+"_x": 13.035,
+"_y": 0.6,
+"_z": 17.866
+},
+{
+"display_name": "Prompt-collection-for-agent-coding",
+"group": "Remote Only",
+"local_path": "",
+"source": "remote_only",
+"gh_slug": "CTCycle/Prompt-collection-for-agent-coding",
+"gh": {
+"createdAt": "2026-04-19T21:21:08Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 192301,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 9963,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 29255,
+"node": {
+"name": "C#"
+}
+},
+{
+"size": 16469,
+"node": {
+"name": "Shell"
+}
+},
+{
+"size": 5060,
+"node": {
+"name": "Jupyter Notebook"
+}
+},
+{
+"size": 5006,
+"node": {
+"name": "Swift"
+}
+},
+{
+"size": 4947,
+"node": {
+"name": "PowerShell"
+}
+}
+],
+"name": "Prompt-collection-for-agent-coding",
+"nameWithOwner": "CTCycle/Prompt-collection-for-agent-coding",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-02T09:23:21Z",
+"visibility": "PRIVATE"
+},
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/Prompt-collection-for-agent-coding.git"
+}
+},
+"default_branch": "main",
+"branches": {},
+"last_commit": {},
+"last_tag": "",
+"last_fetch": "",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false
+},
+"file_count": 0,
+"commit_count": 0,
+"technologies": [
+"Python",
+"Python",
+"JavaScript",
+"C#",
+"Shell",
+"Jupyter Notebook",
+"Swift",
+"PowerShell"
+],
+"readme_description": "",
+"open_prs": [],
+"_group": "LLM & Tools",
+"_shape": "cardstack",
+"_nebula": 1710634,
+"_x": 12.566,
+"_y": 0.9,
+"_z": 18.335
+},
+{
+"display_name": "DILIGENT Clinical Copilot",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\DILIGENT Clinical Copilot",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/DILIGENT-Clinical-Copilot.git",
+"push": "https://github.com/CTCycle/DILIGENT-Clinical-Copilot.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "585605a8",
+"message": "Refactor: Remove unnecessary blank lines across multiple files for improved readability"
+},
+"latest-changes": {
+"current": false,
+"sha": "228a3346",
+"message": "[gone] Refactor JobState and JobManager for improved result handling and type consistency"
+},
+"main": {
+"current": false,
+"sha": "0fa75367",
+"message": "Restore packaged model resource directory"
+}
+},
+"last_commit": {
+"sha": "585605a8",
+"message": "Refactor: Remove unnecessary blank lines across multiple files for improved readability"
+},
+"last_tag": "v2.3.0",
+"last_fetch": "2026-07-09 17:04",
+"ahead": 0,
+"behind": 5,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 2,
+"staged_count": 1,
+"changed_count": 24,
+"conflict_count": 0
+},
+"file_count": 731,
+"commit_count": 1040,
+"technologies": [
+"Unknown"
+],
+"readme_description": "DILIGENT Clinical Copilot supports clinicians during Drug-Induced Liver Injury (DILI) evaluations with a FastAPI backend and an Angular + TypeScript frontend. It collects anamnesis, medications, and lab values, then coordinates clinical analysis with optional RAG support and session persistence f...",
+"gh_slug": "CTCycle/DILIGENT-Clinical-Copilot",
+"gh": {
+"createdAt": "2025-08-19T06:59:03Z",
+"description": "An AI-powered clinical copilot designed to assist physicians in detecting and managing Drug-Induced Liver Injury (DILI), leveraging the capabilities of large language models (LLMs).",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 2796125,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 45964,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 104637,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 268211,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 25616,
+"node": {
+"name": "Rust"
+}
+},
+{
+"size": 17648,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 6981,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 234045,
+"node": {
+"name": "SCSS"
+}
+}
+],
+"name": "DILIGENT-Clinical-Copilot",
+"nameWithOwner": "CTCycle/DILIGENT-Clinical-Copilot",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-06T16:57:29Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Clinical AI",
+"_shape": "shield",
+"_nebula": 1714749,
+"_x": -4.784,
+"_y": 0.0,
+"_z": 20.961
+},
+{
+"display_name": "XREPORT Radiological Reports",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\XREPORT Radiological Reports",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/XREPORT-radiological-reports-generator.git",
+"push": "https://github.com/CTCycle/XREPORT-radiological-reports-generator.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "09fa44d",
+"message": "fix: update .gitignore to include assets/QA and app/server/uv.lock; revise last updated date in startup.md"
+},
+"main": {
+"current": false,
+"sha": "bf8a756",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "09fa44d",
+"message": "fix: update .gitignore to include assets/QA and app/server/uv.lock; revise last updated date in startup.md"
+},
+"last_tag": "v2.4.0",
+"last_fetch": "2026-07-07 22:50",
+"ahead": 3,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 238,
+"commit_count": 638,
+"technologies": [
+"Unknown"
+],
+"readme_description": "XREPORT is a client-server application that generates draft radiological reports from X-ray images. It combines a FastAPI backend and a React frontend to support end-to-end workflows for dataset preparation, model training, validation, and report generation.",
+"gh_slug": "CTCycle/XREPORT-radiological-reports-generator",
+"gh": {
+"createdAt": "2024-01-17T15:12:46Z",
+"description": "Automatic generation of descriptive radiological reports from X-RAY scans",
+"forkCount": 3,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 493316,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 46193,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 355,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 322356,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 92107,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 5024,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 2050,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 20045,
+"node": {
+"name": "Rust"
+}
+}
+],
+"name": "XREPORT-radiological-reports-generator",
+"nameWithOwner": "CTCycle/XREPORT-radiological-reports-generator",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 6,
+"updatedAt": "2026-07-07T20:50:27Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Clinical AI",
+"_shape": "xrayfilm",
+"_nebula": 1714746,
+"_x": -5.374,
+"_y": 3.3,
+"_z": 21.159
+},
+{
+"display_name": "CTCycle-profile",
+"group": "Repositories",
+"local_path": "G:\\Projects\\Repositories\\CTCycle-profile",
+"source": "local_only",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/CTCycle.git",
+"push": "https://github.com/CTCycle/CTCycle.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "383d5ad",
+"message": "Add CTCycle profile README with portfolio links"
+}
+},
+"last_commit": {
+"sha": "383d5ad",
+"message": "Add CTCycle profile README with portfolio links"
+},
+"last_tag": "",
+"last_fetch": "",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 1,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 1,
+"commit_count": 27,
+"technologies": [
+"Unknown"
+],
+"readme_description": "**ML researcher building clinical and scientific AI tools**",
+"gh_slug": "",
+"gh": {},
+"open_prs": [],
+"_group": "Clinical AI",
+"_shape": "crystal",
+"_nebula": 1843496,
+"_x": -6.086,
+"_y": 0.6,
+"_z": 21.116
+},
+{
+"display_name": "AEGIS Geospatial View",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\AEGIS Geospatial View",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/AEGIS-Geospatial-View.git",
+"push": "https://github.com/CTCycle/AEGIS-Geospatial-View.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "84b91d7",
+"message": "upgrade: Angular v19.2.25 -> v22.0.5 (sequential v19->v20->v21->v22)"
+},
+"main": {
+"current": false,
+"sha": "4ab1b3f",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "84b91d7",
+"message": "upgrade: Angular v19.2.25 -> v22.0.5 (sequential v19->v20->v21->v22)"
+},
+"last_tag": "",
+"last_fetch": "2026-07-08 10:06",
+"ahead": 9,
+"behind": 1,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 595,
+"commit_count": 555,
+"technologies": [
+"Unknown"
+],
+"readme_description": "AEGIS Geospatial View is a place-focused workspace built around conversation.",
+"gh_slug": "CTCycle/AEGIS-Geospatial-View",
+"gh": {
+"createdAt": "2025-10-10T08:09:11Z",
+"description": "Explore geospatial data through a dedicated web app that provides access to more than a thousand data sources.",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 1808795,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 47011,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 39331,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 53080,
+"node": {
+"name": "CSS"
+}
+},
+{
+"size": 327036,
+"node": {
+"name": "TypeScript"
+}
+},
+{
+"size": 4270,
+"node": {
+"name": "PowerShell"
+}
+},
+{
+"size": 2548,
+"node": {
+"name": "JavaScript"
+}
+}
+],
+"name": "AEGIS-Geospatial-View",
+"nameWithOwner": "CTCycle/AEGIS-Geospatial-View",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T08:07:12Z",
+"visibility": "PUBLIC"
+},
+"open_prs": [],
+"_group": "Geospatial & Data",
+"_shape": "globe",
+"_nebula": 1714730,
+"_x": -19.371,
+"_y": 0.0,
+"_z": 9.329
+},
+{
+"display_name": "WFLCAST Win4Life Prediction",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\WFLCAST Win4Life Prediction",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/WFL-forecast.git",
+"push": "https://github.com/CTCycle/WFL-forecast.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "f7bd28f",
+"message": "fix: Update .gitignore to include additional resource directories and clean up obsolete entries"
+},
+"main": {
+"current": false,
+"sha": "f7bd28f",
+"message": "fix: Update .gitignore to include additional resource directories and clean up obsolete entries"
+}
+},
+"last_commit": {
+"sha": "f7bd28f",
+"message": "fix: Update .gitignore to include additional resource directories and clean up obsolete entries"
+},
+"last_tag": "",
+"last_fetch": "2026-07-07 22:50",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 83,
+"commit_count": 176,
+"technologies": [
+"Python"
+],
+"readme_description": "WFLCast is a local Python CLI project for collecting Win for Life extraction history and running probabilistic forecasting experiments on the extraction contract:",
+"gh_slug": "CTCycle/WFL-forecast",
+"gh": {
+"createdAt": "2024-09-13T10:52:31Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 144639,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 2297,
+"node": {
+"name": "Batchfile"
+}
+}
+],
+"name": "WFL-forecast",
+"nameWithOwner": "CTCycle/WFL-forecast",
+"primaryLanguage": {
+"name": "Python"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-07T20:51:06Z",
+"visibility": "PRIVATE"
+},
+"open_prs": [],
+"_group": "Geospatial & Data",
+"_shape": "crystalball",
+"_nebula": 1710650,
+"_x": -19.919,
+"_y": 0.3,
+"_z": 8.723
+},
+{
+"display_name": "PASTAPORTO mobile app",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\PASTAPORTO mobile app",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/PASTAPORTO.git",
+"push": "https://github.com/CTCycle/PASTAPORTO.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "f1c715c",
+"message": "refactor: Update UI/UX audit report and design tokens for improved consistency and accessibility"
+},
+"main": {
+"current": false,
+"sha": "fc909f1",
+"message": "Merge branch 'develop'"
+}
+},
+"last_commit": {
+"sha": "f1c715c",
+"message": "refactor: Update UI/UX audit report and design tokens for improved consistency and accessibility"
+},
+"last_tag": "",
+"last_fetch": "2026-07-09 17:03",
+"ahead": 8,
+"behind": 1,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 7,
+"staged_count": 1,
+"changed_count": 16,
+"conflict_count": 2
+},
+"file_count": 359,
+"commit_count": 174,
+"technologies": [
+"Flutter"
+],
+"readme_description": "PASTAPORTO is a playful mobile passport for pasta lovers. It turns browsing pasta types into a small travel-like experience: you open a cover, flip through pages, discover different pasta entries, stamp the ones you have found, and keep track of your progress as you go.",
+"gh_slug": "CTCycle/PASTAPORTO",
+"gh": {
+"createdAt": "2025-12-10T19:50:18Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 123,
+"node": {
+"name": "Kotlin"
+}
+},
+{
+"size": 556171,
+"node": {
+"name": "Dart"
+}
+},
+{
+"size": 900,
+"node": {
+"name": "Swift"
+}
+},
+{
+"size": 38,
+"node": {
+"name": "Objective-C"
+}
+},
+{
+"size": 3095,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 3453,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 2656,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 4043,
+"node": {
+"name": "Shell"
+}
+},
+{
+"size": 7250,
+"node": {
+"name": "Python"
+}
+},
+{
+"size": 2276,
+"node": {
+"name": "PowerShell"
+}
+}
+],
+"name": "PASTAPORTO",
+"nameWithOwner": "CTCycle/PASTAPORTO",
+"primaryLanguage": {
+"name": "Dart"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-07-08T08:05:04Z",
+"visibility": "PRIVATE"
+},
+"open_prs": [],
+"_group": "Mobile Apps",
+"_shape": "book",
+"_nebula": 2759194,
+"_x": -19.371,
+"_y": 0.0,
+"_z": -9.329
+},
+{
+"display_name": "PeriodIQ mobile app",
+"group": "Active",
+"local_path": "G:\\Projects\\Repositories\\Active projects\\PeriodIQ mobile app",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/PeriodIQ-mobile-app.git",
+"push": "https://github.com/CTCycle/PeriodIQ-mobile-app.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": true,
+"sha": "ce91cdd",
+"message": "chore: update .gitignore to include additional Flutter/Dart and platform-specific files"
+},
+"main": {
+"current": false,
+"sha": "cce09a3",
+"message": "docs: update project overview link and add project index documentation"
+}
+},
+"last_commit": {
+"sha": "ce91cdd",
+"message": "chore: update .gitignore to include additional Flutter/Dart and platform-specific files"
+},
+"last_tag": "",
+"last_fetch": "2026-07-01 11:30",
+"ahead": 0,
+"behind": 1,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 272,
+"commit_count": 39,
+"technologies": [
+"Flutter"
+],
+"readme_description": "PeriodIQ is a mobile-first strategy game built around the periodic table. It is designed to feel like a game you can pick up quickly: you move through the table, manage a small set of resources, use cards to shape your turn, and try to build the strongest result before the match ends.",
+"gh_slug": "CTCycle/PeriodIQ-mobile-app",
+"gh": {
+"createdAt": "2026-03-04T22:19:28Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 1254,
+"node": {
+"name": "Batchfile"
+}
+},
+{
+"size": 6203,
+"node": {
+"name": "JavaScript"
+}
+},
+{
+"size": 1596,
+"node": {
+"name": "HTML"
+}
+},
+{
+"size": 2388,
+"node": {
+"name": "Kotlin"
+}
+},
+{
+"size": 900,
+"node": {
+"name": "Swift"
+}
+},
+{
+"size": 38,
+"node": {
+"name": "Objective-C"
+}
+},
+{
+"size": 381062,
+"node": {
+"name": "Dart"
+}
+}
+],
+"name": "PeriodIQ-mobile-app",
+"nameWithOwner": "CTCycle/PeriodIQ-mobile-app",
+"primaryLanguage": {
+"name": "Dart"
+},
+"stargazerCount": 0,
+"updatedAt": "2026-06-10T15:07:02Z",
+"visibility": "PRIVATE"
+},
+"open_prs": [],
+"_group": "Mobile Apps",
+"_shape": "moonring",
+"_nebula": 2759210,
+"_x": -19.239,
+"_y": 0.3,
+"_z": -10.135
+},
+{
+"display_name": "EOC analisi",
+"group": "Data Analysis",
+"local_path": "G:\\Projects\\Repositories\\Data analysis\\EOC analisi",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/EOC-analisi.git",
+"push": "https://github.com/CTCycle/EOC-analisi.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"develop": {
+"current": false,
+"sha": "7e0bef3",
+"message": "updated notebooks"
+},
+"main": {
+"current": true,
+"sha": "b555628",
+"message": "modified styling of some plots"
+}
+},
+"last_commit": {
+"sha": "b555628",
+"message": "modified styling of some plots"
+},
+"last_tag": "",
+"last_fetch": "2025-12-04 09:12",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 0,
+"staged_count": 1,
+"changed_count": 2,
+"conflict_count": 0
+},
+"file_count": 4,
+"commit_count": 10,
+"technologies": [
+"Jupyter"
+],
+"readme_description": "",
+"gh_slug": "CTCycle/EOC-analisi",
+"gh": {
+"createdAt": "2025-11-04T10:47:08Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 1432496,
+"node": {
+"name": "Jupyter Notebook"
+}
+},
+{
+"size": 9784,
+"node": {
+"name": "Python"
+}
+}
+],
+"name": "EOC-analisi",
+"nameWithOwner": "CTCycle/EOC-analisi",
+"primaryLanguage": {
+"name": "Jupyter Notebook"
+},
+"stargazerCount": 0,
+"updatedAt": "2025-12-04T08:12:53Z",
+"visibility": "PRIVATE"
+},
+"open_prs": [],
+"_group": "Research Studies",
+"_shape": "waveform",
+"_nebula": 2763290,
+"_x": -4.784,
+"_y": 0.0,
+"_z": -20.961
+},
+{
+"display_name": "Tesi Alice Farmacologia",
+"group": "Data Analysis",
+"local_path": "G:\\Projects\\Repositories\\Data analysis\\Tesi Alice Farmacologia",
+"source": "local",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/DIREU-rheumathology-study.git",
+"push": "https://github.com/CTCycle/DIREU-rheumathology-study.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "ee3991d",
+"message": "updated analysis workflow with some graphs"
+}
+},
+"last_commit": {
+"sha": "ee3991d",
+"message": "updated analysis workflow with some graphs"
+},
+"last_tag": "",
+"last_fetch": "2025-01-30 14:28",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": false,
+"untracked_count": 0,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 0
+},
+"file_count": 13,
+"commit_count": 30,
+"technologies": [
+"Jupyter"
+],
+"readme_description": "",
+"gh_slug": "CTCycle/DIREU-rheumathology-study",
+"gh": {
+"createdAt": "2024-10-31T13:52:11Z",
+"description": "",
+"forkCount": 0,
+"homepageUrl": "",
+"isArchived": false,
+"isFork": false,
+"languages": [
+{
+"size": 124871,
+"node": {
+"name": "Jupyter Notebook"
+}
+},
+{
+"size": 357,
+"node": {
+"name": "Python"
+}
+}
+],
+"name": "DIREU-rheumathology-study",
+"nameWithOwner": "CTCycle/DIREU-rheumathology-study",
+"primaryLanguage": {
+"name": "Jupyter Notebook"
+},
+"stargazerCount": 0,
+"updatedAt": "2025-01-30T13:28:25Z",
+"visibility": "PRIVATE"
+},
+"open_prs": [],
+"_group": "Research Studies",
+"_shape": "joint",
+"_nebula": 2763290,
+"_x": -4.072,
+"_y": 0.3,
+"_z": -21.36
+},
+{
+"display_name": "Python environments",
+"group": "Tools & Config",
+"local_path": "G:\\Projects\\Configurations\\Python environments",
+"source": "local_only",
+"remotes": {
+"origin": {
+"fetch": "https://github.com/CTCycle/Python-environments.git",
+"push": "https://github.com/CTCycle/Python-environments.git"
+}
+},
+"default_branch": "main",
+"branches": {
+"main": {
+"current": true,
+"sha": "d264848",
+"message": "readded triton"
+}
+},
+"last_commit": {
+"sha": "d264848",
+"message": "readded triton"
+},
+"last_tag": "",
+"last_fetch": "2025-08-18 14:16",
+"ahead": 0,
+"behind": 0,
+"git_status": {
+"is_dirty": true,
+"untracked_count": 2,
+"staged_count": 0,
+"changed_count": 0,
+"conflict_count": 4
+},
+"file_count": 4,
+"commit_count": 11,
+"technologies": [
+"Unknown"
+],
+"readme_description": "",
+"gh_slug": "",
+"gh": {},
+"open_prs": [],
+"_group": "Infrastructure",
+"_shape": "gearnest",
+"_nebula": 1714714,
+"_x": 13.405,
+"_y": 0.0,
+"_z": -16.809
+}
+]
+}, LANG_COLORS={
+"Python": 3502757,
+"Jupyter Notebook": 14310155,
+"Jupyter": 14310155,
+"Rust": 14591364,
+"Dart": 46251,
+"Flutter": 46251,
+"TypeScript": 3242182,
+"JavaScript": 16244510,
+"HTML": 14896934,
+"CSS": 5651836,
+"Shell": 9035857,
+"Docker": 2397933,
+"Node.js": 3381555,
+"Unknown": 9147550
+}, repos=DATA.repos||[], total=repos.length;
+
+// ── Scene ────────────────────────────────────────────────────────────────────
+const scene=new THREE.Scene();
+scene.fog=new THREE.FogExp2(0x05080f,0.00004);
+const camera=new THREE.PerspectiveCamera(50,innerWidth/innerHeight,4,500);
+camera.position.set(30,22,45);camera.lookAt(0,-2,0);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;
+document.body.appendChild(renderer.domElement);
+
+// Controls
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=6;controls.maxDistance=120;
+controls.maxPolarAngle=Math.PI*.65;controls.target.set(0,-1,0);controls.update();
+
+// Lighting
+scene.add(new THREE.AmbientLight(0x1c2330,1.8));
+const sun=new THREE.DirectionalLight(0xffffff,3);sun.position.set(40,50,30);
+sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+sun.shadow.camera.near=1;sun.shadow.camera.far=200;
+sun.shadow.camera.left=-70;sun.shadow.camera.right=70;sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;
+sun.shadow.bias=-0.0002;scene.add(sun);
+const r1=new THREE.DirectionalLight(0x58a6ff,.4);r1.position.set(-20,5,-20);scene.add(r1);
+const r2=new THREE.DirectionalLight(0xdb6d28,.3);r2.position.set(10,-8,25);scene.add(r2);
+
+// Starfield
+const sGeo=new THREE.BufferGeometry();const sPos=new Float32Array(1200*3);const sCol=new Float32Array(1200*3);
+for(let i=0;i<3600;i+=3){sPos[i]=(Math.random()-.5)*180;sPos[i+1]=(Math.random()-.3)*80;sPos[i+2]=(Math.random()-.5)*180;const b=.4+Math.random()*.6;sCol[i]=sCol[i+1]=sCol[i+2]=b}
+sGeo.setAttribute('position',new THREE.BufferAttribute(sPos,3));sGeo.setAttribute('color',new THREE.BufferAttribute(sCol,3));
+scene.add(new THREE.Points(sGeo,new THREE.PointsMaterial({size:.12,vertexColors:true,transparent:true,opacity:.7,blending:THREE.AdditiveBlending,depthWrite:false})));
+
+// Nebula zones per group
+const groups=[...new Set(repos.map(r=>r._group))];
+groups.forEach(g=>{const rs=repos.filter(r=>r._group===g);if(!rs.length)return;
+  const nc=rs[0]._nebula||0x1c1c2a;const ng=new THREE.SphereGeometry(6+Math.random()*3,16,16);
+  const nm=new THREE.ShaderMaterial({uniforms:{uColor:{value:new THREE.Color(nc)},uTime:{value:0}},
+    vertexShader:'varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+    fragmentShader:'varying vec3 vP;uniform vec3 uColor;uniform float uTime;void main(){float d=length(vP)/10.0;float a=smoothstep(1.0,0.0,d)*0.12;a*=0.6+0.4*sin(vP.y*0.5+uTime*0.3);gl_FragColor=vec4(uColor,a);}',
+    transparent:true,depthWrite:false,blending:THREE.AdditiveBlending});
+  const n=new THREE.Mesh(ng,nm);const cx=rs.reduce((s,r)=>s+r._x,0)/rs.length;const cz=rs.reduce((s,r)=>s+r._z,0)/rs.length;
+  n.position.set(cx,-1,cz);n.userData={isNebula:true,material:nm};scene.add(n);
+});
+
+// Floaters
+const fpGeo=new THREE.BufferGeometry();const fpPos=new Float32Array(400*3);
+for(let i=0;i<1200;i+=3){fpPos[i]=(Math.random()-.5)*100;fpPos[i+1]=Math.random()*20-5;fpPos[i+2]=(Math.random()-.5)*100}
+fpGeo.setAttribute('position',new THREE.BufferAttribute(fpPos,3));
+const floaters=new THREE.Points(fpGeo,new THREE.PointsMaterial({size:.06,color:0x484f58,transparent:true,opacity:.5,blending:THREE.AdditiveBlending,depthWrite:false}));scene.add(floaters);
+
+// Ground ring
+const gr=new THREE.Mesh(new THREE.RingGeometry(28,30,96),new THREE.MeshBasicMaterial({color:0x161b22,side:THREE.DoubleSide,transparent:true,opacity:.5}));
+gr.rotation.x=-Math.PI/2;gr.position.y=-12;scene.add(gr);
+
+// ── SHAPE BUILDERS ───────────────────────────────────────────────────────────
+function M(color,opts={}){return new THREE.MeshStandardMaterial({color,roughness:.35,metalness:.3,...opts})}
+function GOLD(){return new THREE.MeshStandardMaterial({color:0xd29922,emissive:0xd29922,emissiveIntensity:.6,roughness:.15,metalness:.4})}
+
+// 1. ROULETTE WHEEL — FAIRS
+function buildRoulette(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.75;
+  const wheel=new THREE.Mesh(new THREE.TorusGeometry(R,.08,16,48),M(0x8b0000,{roughness:.3,metalness:.6}));g.add(wheel);
+  // Inner ring
+  g.add(new THREE.Mesh(new THREE.TorusGeometry(R*.65,.06,8,32),M(0x1a1a1a,{roughness:.2,metalness:.7})));
+  // Spokes
+  for(let i=0;i<12;i++){const a=i*Math.PI/6;const spoke=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,R*.55,4),M(0xd4af37,{roughness:.2}));spoke.rotation.z=Math.PI/2;spoke.rotation.y=a;g.add(spoke)}
+  // Center hub
+  g.add(new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.1,16),M(0xd4af37,{roughness:.1,metalness:.8})));
+  // Ball
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(.06,8,8),M(0xffffff,{roughness:.1,emissive:0xffffff,emissiveIntensity:.4}));
+  ball.position.set(R*.8,0,0);ball.userData={rouletteBall:true,speed:1.5+stars*.3,radius:R*.8};g.add(ball);
+  // Number markers (small dots around rim)
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;const dot=new THREE.Mesh(new THREE.SphereGeometry(.04,4,4),i%2===0?M(0xff0000):M(0x111111));dot.position.set(Math.cos(a)*R*.92,.03,Math.sin(a)*R*.92);g.add(dot)}
+  // Star chips
+  for(let s=0;s<Math.min(stars,6);s++){const chip=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.02,12),GOLD());chip.position.set((s-2.5)*.25,.08,0);chip.rotation.x=Math.PI/2;g.add(chip)}
+  return g;
+}
+
+// 2. POROUS LATTICE — ADSMOD
+function buildLattice(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.65;
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(R,R,.12,24),M(langColor,{roughness:.5}));base.position.y=-.06;g.add(base);
+  // Stacked perforated discs
+  for(let l=0;l<4;l++){const d=new THREE.Mesh(new THREE.TorusGeometry(R*.7,.04,8,24),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.3,roughness:.1}));d.rotation.x=Math.PI/2;d.position.y=l*.22+.06;g.add(d)}
+  // Pillars
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;const p=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.85,6),M(langColor,{roughness:.3}));p.position.set(Math.cos(a)*R*.5,.4,Math.sin(a)*R*.5);g.add(p)}
+  // Gas molecule particles
+  for(let m=0;m<Math.min(stars+3,8);m++){const mol=new THREE.Mesh(new THREE.SphereGeometry(.06,6,6),M(0x3fb950,{emissive:0x3fb950,emissiveIntensity:.5}));mol.position.set((Math.random()-.5)*R*1.2,(Math.random()-.2)*.9+.2,(Math.random()-.5)*R*1.2);mol.userData={molecule:true,speed:.3+Math.random()*.5};g.add(mol)}
+  return g;
+}
+
+// 3. SPIDER ROBOT — EMADB
+function buildSpider(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.55;
+  const body=new THREE.Mesh(new THREE.IcosahedronGeometry(R*.6,1),M(langColor,{roughness:.2,metalness:.7}));g.add(body);
+  // Camera eye
+  g.add(new THREE.Mesh(new THREE.SphereGeometry(R*.2,8,8),M(0xff3333,{emissive:0xff3333,emissiveIntensity:.8,roughness:.1})));
+  // 6 legs
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;const segs=3;
+    for(let s=0;s<segs;s++){const sr=R*.3+s*.12;const len=R*.4;const leg=new THREE.Mesh(new THREE.CylinderGeometry(.03,.04,len,6),M(langColor,{roughness:.2,metalness:.5}));leg.position.set(Math.cos(a)*sr,.05-s*.15,Math.sin(a)*sr);leg.rotation.z=Math.PI/2;leg.rotation.y=a+.3;g.add(leg)}}
+  // Data antenna
+  const ant=new THREE.Mesh(new THREE.CylinderGeometry(.02,.06,R*.8,6),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.6,roughness:.1}));ant.position.y=R*.5;g.add(ant);
+  return g;
+}
+
+// 4. HOURGLASS ENCODER — FEXT
+function buildHourglass(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.6;
+  const top=new THREE.Mesh(new THREE.ConeGeometry(R,.5,16),M(langColor,{roughness:.3,metalness:.5}));top.position.y=.3;g.add(top);
+  const bot=new THREE.Mesh(new THREE.ConeGeometry(R,.5,16),M(langColor,{roughness:.3,metalness:.5}));bot.position.y=-.3;bot.rotation.z=Math.PI;g.add(bot);
+  // Bottleneck ring
+  g.add(new THREE.Mesh(new THREE.TorusGeometry(R*.15,.05,8,16),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.7,roughness:.1})));
+  // Data flow particles (move through bottleneck)
+  for(let p=0;p<Math.min(stars+3,7);p++){const dp=new THREE.Mesh(new THREE.SphereGeometry(.04,4,4),M(0x3fb950,{emissive:0x3fb950,emissiveIntensity:.5}));dp.position.set((Math.random()-.5)*R*.8,(Math.random()-.5)*.6,(Math.random()-.5)*R*.8);dp.userData={flow:true,speed:.5+Math.random(),offset:Math.random()*Math.PI*2};g.add(dp)}
+  return g;
+}
+
+// 5. NODE GRAPH — ParaGraph
+function buildNodegraph(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const nodes=[];
+  // Create 5-6 nodes
+  for(let i=0;i<6;i++){const nR=.08+.1*(i%3);const a=(i/6)*Math.PI*2;const r=b*.5;const node=new THREE.Mesh(new THREE.SphereGeometry(nR,12,12),M(langColor,{emissive:langColor,emissiveIntensity:.4,roughness:.2}));node.position.set(Math.cos(a)*r,i*.12-.3,Math.sin(a)*r);nodes.push(node);g.add(node)}
+  // Connecting edges
+  for(let i=0;i<nodes.length;i++){for(let j=i+1;j<nodes.length;j++){if(Math.random()>.4){const dist=nodes[i].position.distanceTo(nodes[j].position);
+    const curve=new THREE.QuadraticBezierCurve3(nodes[i].position.clone(),nodes[i].position.clone().add(nodes[j].position).multiplyScalar(.5).add(new THREE.Vector3(0,dist*.3,0)),nodes[j].position.clone());
+    const pts=curve.getPoints(12);const lg=new THREE.BufferGeometry().setFromPoints(pts);g.add(new THREE.Line(lg,new THREE.LineBasicMaterial({color:0x30363d,transparent:true,opacity:.5,depthWrite:false})))}}}
+  // Pulse nodes
+  nodes.forEach((n,i)=>{n.userData={pulse:true,speed:.8+i*.3,baseScale:n.scale.x}});
+  return g;
+}
+
+// 6. GAUGE METER — TKBEN
+function buildGauge(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.65;
+  const arc=new THREE.Mesh(new THREE.TorusGeometry(R,.06,8,24,Math.PI),M(0x30363d,{roughness:.5}));arc.rotation.z=Math.PI;arc.position.y=-.1;g.add(arc);
+  // Colored arc segments
+  const segs=[{color:0x3fb950,arc:1.2},{color:0xd29922,arc:.5},{color:0xf85149,arc:.44}];
+  let sa=0;segs.forEach(s=>{const sg=new THREE.Mesh(new THREE.TorusGeometry(R,.04,6,16,s.arc),M(s.color,{emissive:s.color,emissiveIntensity:.4,roughness:.2}));sg.rotation.z=Math.PI+sa;sg.rotation.x=Math.PI/2;sg.position.y=-.1;g.add(sg);sa+=s.arc});
+  // Needle
+  const needle=new THREE.Mesh(new THREE.BoxGeometry(.03,R*.85,.02),M(0xf85149,{emissive:0xf85149,emissiveIntensity:.5}));needle.position.set(0,-.1,R*.35);needle.userData={needle:true,speed:.4+stars*.3};g.add(needle);
+  // Center hub
+  g.add(new THREE.Mesh(new THREE.CylinderGeometry(.08,.08,.06,16),M(0x30363d,{roughness:.1,metalness:.8}))).translateY(-.1);
+  return g;
+}
+
+// 7. CRYSTAL TEST CHAMBER — LLMeter
+function buildCrystalShape(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.55;
+  const crystal=new THREE.Mesh(new THREE.OctahedronGeometry(R*.7,1),M(langColor,{roughness:.15,metalness:.6,emissive:langColor,emissiveIntensity:.3}));g.add(crystal);
+  // Glass dome
+  const dome=new THREE.Mesh(new THREE.SphereGeometry(R*.75,16,16),new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.1,metalness:0,transparent:true,opacity:.15,clearcoat:.3}));g.add(dome);
+  // Measurement beams
+  for(let i=0;i<4;i++){const a=i*Math.PI/2;const beam=new THREE.Mesh(new THREE.CylinderGeometry(.015,.015,R*1.1,6),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.8,roughness:.05}));beam.rotation.z=Math.PI/2;beam.rotation.y=a;g.add(beam)}
+  return g;
+}
+
+// 8. CARD STACK — Prompt-collection
+function buildCardstack(b,stars,isPublic,langColor){
+  const g=new THREE.Group();
+  for(let i=0;i<5;i++){const card=new THREE.Mesh(new THREE.BoxGeometry(b*.7,b*.05,b*.9),M(langColor,{roughness:.4}));card.position.set(i*.06,i*.04,-i*.03);card.rotation.x=-.1;card.rotation.z=.05;g.add(card);}
+  // Text glyph lines on top card
+  for(let l=0;l<3;l++){const line=new THREE.Mesh(new THREE.BoxGeometry(b*.4,.012,.015),M(0xe6edf3,{roughness:.2}));line.position.set(.02,.22,.4-l*.08);g.add(line)}
+  return g;
+}
+
+// 9. MEDICAL SHIELD — DILIGENT
+function buildShield(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.6;
+  // Shield body (approximate with scaled octahedron)
+  const shield=new THREE.Mesh(new THREE.OctahedronGeometry(R,1),M(langColor,{roughness:.25,metalness:.5,emissive:langColor,emissiveIntensity:.2}));shield.scale.set(1,.7,.6);g.add(shield);
+  // Cross emblem
+  const cv=new THREE.Mesh(new THREE.BoxGeometry(R*.15,R*.7,R*.05),M(0xffffff,{roughness:.1,emissive:0xffffff,emissiveIntensity:.3}));g.add(cv);
+  const ch=new THREE.Mesh(new THREE.BoxGeometry(R*.7,R*.15,R*.05),M(0xffffff,{roughness:.1,emissive:0xffffff,emissiveIntensity:.3}));g.add(ch);
+  // Pulsing heart core
+  const heart=new THREE.Mesh(new THREE.SphereGeometry(R*.2,8,8),M(0xff3333,{emissive:0xff3333,emissiveIntensity:.9,roughness:.1}));heart.userData={pulse:true,baseScale:R*.2,speed:2};g.add(heart);
+  return g;
+}
+
+// 10. X-RAY FILM — XREPORT
+function buildXrayfilm(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.65;
+  const film=new THREE.Mesh(new THREE.BoxGeometry(R*1.6,.04,R*1.2),new THREE.MeshStandardMaterial({color:0x0a1628,roughness:.3,emissive:0x0a1a30,emissiveIntensity:.4}));g.add(film);
+  // Cyan edge glow
+  const edge=new THREE.Mesh(new THREE.BoxGeometry(R*1.62,.05,R*1.22),new THREE.MeshBasicMaterial({color:0x00bcd4,transparent:true,opacity:.2}));edge.position.y=-.01;g.add(edge);
+  // Ribcage arcs (approximation with torus segments)
+  for(let i=0;i<5;i++){const rib=new THREE.Mesh(new THREE.TorusGeometry(R*.8,.02,6,12,Math.PI*.7),M(0x4dd0e1,{emissive:0x4dd0e1,emissiveIntensity:.5,roughness:.1}));rib.rotation.z=Math.PI*.6;rib.position.set(0,.02,R*.3-i*.12);g.add(rib)}
+  // Spine line
+  const spine=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,R*1.1,6),M(0x4dd0e1,{emissive:0x4dd0e1,emissiveIntensity:.4}));spine.position.set(0,.03,0);g.add(spine);
+  return g;
+}
+
+// 11. PASSPORT BOOK — PASTAPORTO
+function buildBook(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.55;
+  const cover=new THREE.Mesh(new THREE.BoxGeometry(R*1.4,.08,R*.9),M(0x8b0000,{roughness:.3,metalness:.2}));g.add(cover);
+  const pages=new THREE.Mesh(new THREE.BoxGeometry(R*1.3,.03,R*.85),M(0xf5f5dc,{roughness:.7}));pages.position.y=.05;g.add(pages);
+  // Passport emblem (gold circle)
+  const emblem=new THREE.Mesh(new THREE.TorusGeometry(R*.2,.03,8,16),GOLD());emblem.rotation.x=Math.PI/2;emblem.position.y=.1;g.add(emblem);
+  // Star stamps
+  for(let s=0;s<Math.min(stars,5);s++){const stamp=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,.02,6),GOLD());stamp.position.set(R*.6-s*.2,.1,-R*.3);g.add(stamp)}
+  return g;
+}
+
+// 12. MOON CYCLE RING — PeriodIQ
+function buildMoonring(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.6;
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(R,.05,8,32),M(0xd4a0d4,{emissive:0xd4a0d4,emissiveIntensity:.3,roughness:.2,metalness:.4}));g.add(ring);
+  // Orbiting phase moons
+  for(let i=0;i<5;i++){const a=i*Math.PI*2/5;const moonR=R*.35;const moon=new THREE.Mesh(new THREE.SphereGeometry(.08,8,8),i<3?M(0xf5f5dc,{emissive:0xf5f5dc,emissiveIntensity:.5}):M(0x2a1a3a));moon.position.set(Math.cos(a)*moonR,.15,Math.sin(a)*moonR);moon.userData={orbiter:true,speed:.3+.4*(i%2),axis:'y',radius:moonR,angle:a};g.add(moon)}
+  // Center glow
+  g.add(new THREE.Mesh(new THREE.SphereGeometry(R*.15,8,8),M(0xd4a0d4,{emissive:0xd4a0d4,emissiveIntensity:1,roughness:.1}))).translateY(.15);
+  return g;
+}
+
+// 13. GLOBE — AEGIS
+function buildGlobe(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.6;
+  const sphere=new THREE.Mesh(new THREE.SphereGeometry(R,24,24),M(langColor,{roughness:.4,metalness:.1}));g.add(sphere);
+  // Wireframe overlay
+  const wire=new THREE.Mesh(new THREE.SphereGeometry(R*.98,24,24),new THREE.MeshBasicMaterial({color:0x58a6ff,wireframe:true,transparent:true,opacity:.15}));g.add(wire);
+  // Lat/long rings
+  for(let i=0;i<4;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(R*.97,.02,8,48),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.2,roughness:.1}));ring.rotation.x=Math.PI/2;ring.rotation.y=i*Math.PI/4;g.add(ring)}
+  // Axis
+  const axis=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,R*1.3,6),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.3}));g.add(axis);
+  return g;
+}
+
+// 14. CRYSTAL BALL — WFLCAST
+function buildCrystalball(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.6;
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(R,24,24),new THREE.MeshPhysicalMaterial({color:0xd4d4ff,roughness:.05,metalness:0,transparent:true,opacity:.4,clearcoat:.5}));g.add(ball);
+  // Inner swirling particles
+  for(let i=0;i<Math.min(stars+8,15);i++){const p=new THREE.Mesh(new THREE.SphereGeometry(.03,4,4),M(0xd4d4ff,{emissive:0xd4d4ff,emissiveIntensity:.7}));const a=Math.random()*Math.PI*2;const pr=R*.3+Math.random()*R*.4;p.position.set(Math.cos(a)*pr,Math.random()*R*.5-R*.25,Math.sin(a)*pr);p.userData={swirl:true,speed:.3+Math.random()*.5,offset:Math.random()*Math.PI*2};g.add(p)}
+  // Base
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(R*.5,R*.6,.1,16),M(0xd4af37,{roughness:.2,metalness:.7}));base.position.y=-R*.5;g.add(base);
+  return g;
+}
+
+// 15. ECG WAVEFORM — EOC
+function buildWaveform(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.6;
+  // Flat platform
+  const plat=new THREE.Mesh(new THREE.BoxGeometry(R*1.6,.06,R*1.2),M(0x0d1117,{roughness:.6}));g.add(plat);
+  // Waveform ribbon (curved line with spike)
+  const pts=[];for(let i=0;i<40;i++){const x=(i/39-.5)*R*1.4;let y=Math.sin(i*.4)*.15;if(i>16&&i<22)y=.5;pts.push(new THREE.Vector3(x,.08,y))}
+  const curve=new THREE.CatmullRomCurve3(pts);const waveGeo=new THREE.TubeGeometry(curve,64,.02,8,false);
+  const wave=new THREE.Mesh(waveGeo,M(0x3fb950,{emissive:0x3fb950,emissiveIntensity:.8,roughness:.1}));g.add(wave);
+  // Heart rate dots
+  for(let d=0;d<Math.min(stars+2,5);d++){const dot=new THREE.Mesh(new THREE.SphereGeometry(.05,6,6),M(0xff3333,{emissive:0xff3333,emissiveIntensity:.7}));dot.position.set((d-2)*.25,.12,-.2);g.add(dot)}
+  return g;
+}
+
+// 16. JOINT ARTICULATION — DIREU
+function buildJoint(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.5;
+  // Ball joint
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(R*.4,16,16),M(0xf5f5dc,{roughness:.15,metalness:.2,emissive:0xf5f5dc,emissiveIntensity:.15}));g.add(ball);
+  // Socket ring
+  g.add(new THREE.Mesh(new THREE.TorusGeometry(R*.42,.04,8,24),M(0x58a6ff,{emissive:0x58a6ff,emissiveIntensity:.4,roughness:.1})));
+  // Connecting bone segments
+  for(let side=-1;side<=1;side+=2){
+    for(let s=0;s<3;s++){const seg=new THREE.Mesh(new THREE.CylinderGeometry(R*.12,R*.14,.3,8),M(langColor,{roughness:.3}));seg.position.set(side*.3,side*(.5+s*.3),0);g.add(seg)}
+  }
+  return g;
+}
+
+// 17. GEAR NEST — Python environments
+function buildGearnest(b,stars,isPublic,langColor){
+  const g=new THREE.Group();const R=b*.5;
+  // Gear approximation (torus with teeth)
+  const gearBody=new THREE.Mesh(new THREE.TorusGeometry(R*.7,.08,8,32),M(langColor,{roughness:.2,metalness:.7}));g.add(gearBody);
+  // Teeth
+  for(let i=0;i<16;i++){const a=i*Math.PI/8;const tooth=new THREE.Mesh(new THREE.BoxGeometry(.04,.1,R*.15),M(langColor,{roughness:.2,metalness:.6}));tooth.position.set(Math.cos(a)*R*.8,0,Math.sin(a)*R*.8);tooth.rotation.y=a;g.add(tooth)}
+  // Snake coil (torus segments)
+  const coil=new THREE.Mesh(new THREE.TorusGeometry(R*.35,.05,8,16,Math.PI*1.5),M(0x3fb950,{emissive:0x3fb950,emissiveIntensity:.4,roughness:.3}));coil.rotation.x=Math.PI/3;coil.position.y=.15;g.add(coil);
+  // Python egg (sphere)
+  g.add(new THREE.Mesh(new THREE.SphereGeometry(R*.25,12,12),M(0x306998,{emissive:0x306998,emissiveIntensity:.5,roughness:.2}))).translateY(.2);
+  return g;
+}
+
+const BUILDERS={roulette:buildRoulette,lattice:buildLattice,spider:buildSpider,hourglass:buildHourglass,nodegraph:buildNodegraph,gauge:buildGauge,crystal:buildCrystalShape,cardstack:buildCardstack,shield:buildShield,xrayfilm:buildXrayfilm,book:buildBook,moonring:buildMoonring,globe:buildGlobe,crystalball:buildCrystalball,waveform:buildWaveform,joint:buildJoint,gearnest:buildGearnest};
+
+// ── Create Islands ───────────────────────────────────────────────────────────
+const islands=[],clickTargets=[];
+repos.forEach((proj,i)=>{
+  const gh=proj.gh||{};const stars=gh.stargazerCount||0;const isPublic=gh.visibility==='PUBLIC';
+  const langName=(gh.primaryLanguage||{}).name||(proj.technologies||[])[0]||'Unknown';
+  const langColor=LANG_COLORS[langName]||0x8b949e;
+  const fileCount=proj.file_count||10;const isDirty=(proj.git_status||{}).is_dirty;
+  const baseSize=.55+Math.log2(fileCount+1)*.35;
+  const shapeId=proj._shape||'crystal';
+
+  const group=new THREE.Group();group.position.set(proj._x,proj._y,proj._z);group.userData={project:proj,baseY:proj._y};
+
+  // Build essence shape
+  const builder=BUILDERS[shapeId]||BUILDERS.crystal;
+  const mesh=builder(baseSize,stars,isPublic,langColor);group.add(mesh);
+
+  // Glow platform
+  const glowGeo=new THREE.CylinderGeometry(baseSize*1.1,baseSize*1.3,.06,24);
+  const glowCol=isPublic?0x1a3a2a:0x161a22;
+  const glow=new THREE.Mesh(glowGeo,new THREE.MeshStandardMaterial({color:glowCol,emissive:glowCol,emissiveIntensity:.5,roughness:.5,transparent:true,opacity:.7}));
+  glow.position.y=-.03;glow.castShadow=true;group.add(glow);
+
+  // Dirty indicators
+  if(isDirty&&proj.source!=='remote_only'){for(let d=0;d<3;d++){const dp=new THREE.Mesh(new THREE.SphereGeometry(.05,4,4),M(0xd29922,{emissive:0xd29922,emissiveIntensity:.7}));dp.userData={dirty:true,offset:Math.random()*Math.PI*2,speed:.5+Math.random()};dp.position.set((Math.random()-.5)*baseSize,.3+Math.random()*.3,(Math.random()-.5)*baseSize);group.add(dp)}}
+
+  // Label sprite
+  const canvas=document.createElement('canvas');canvas.width=256;canvas.height=48;
+  const ctx=canvas.getContext('2d');ctx.fillStyle=isPublic?'#e6edf3':'#6e7681';ctx.font='bold 14px -apple-system,sans-serif';ctx.textAlign='center';
+  const lbl=proj.display_name.length>24?proj.display_name.substring(0,22)+'…':proj.display_name;ctx.fillText(lbl,128,28);
+  const tex=new THREE.CanvasTexture(canvas);tex.minFilter=THREE.LinearFilter;
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false}));
+  sprite.position.y=baseSize+1;sprite.scale.set(3,.56,1);group.add(sprite);
+
+  // Click target
+  const clickGeo=new THREE.CylinderGeometry(baseSize*1.2,baseSize*1.2,baseSize*2+.8,8);
+  const clickObj=new THREE.Mesh(clickGeo,new THREE.MeshBasicMaterial({visible:false}));
+  clickObj.position.y=0;clickObj.userData={isClickTarget:true,islandGroup:group};group.add(clickObj);clickTargets.push(clickObj);
+
+  scene.add(group);islands.push(group);
+});
+
+// ── Connection lines ─────────────────────────────────────────────────────────
+const groupMap={};islands.forEach(is=>{const g=is.userData.project._group;(groupMap[g]=groupMap[g]||[]).push(is)});
+Object.values(groupMap).forEach(gi=>{if(gi.length<2)return;for(let i=0;i<gi.length;i++){for(let j=i+1;j<gi.length;j++){const a=gi[i].position,b=gi[j].position;const dist=a.distanceTo(b);if(dist>18)continue;const mid=new THREE.Vector3().addVectors(a,b).multiplyScalar(.5);const dir=new THREE.Vector3().subVectors(b,a).normalize();const curve=new THREE.QuadraticBezierCurve3(a.clone().add(new THREE.Vector3(0,1.2,0)),mid.clone().add(new THREE.Vector3(0,dist*.25,0)),b.clone().add(new THREE.Vector3(0,1.2,0)));const pts=curve.getPoints(24);const lg=new THREE.BufferGeometry().setFromPoints(pts);scene.add(new THREE.Line(lg,new THREE.LineBasicMaterial({color:0x21262d,transparent:true,opacity:.3,depthWrite:false})))}}});
+
+// ── Interaction ──────────────────────────────────────────────────────────────
+const dashboard=document.getElementById('dashboard'),raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+let selectedIsland=null,targetLookAt=new THREE.Vector3(),targetCamPos=new THREE.Vector3(),isAnimating=false,animStart=0;
+let startCamPos=camera.position.clone(),startTarget=controls.target.clone();
+const DUR=900;
+
+function showDashboard(proj){
+  const gh=proj.gh||{};const isPublic=gh.visibility==='PUBLIC';const stars=gh.stargazerCount||0;const forks=gh.forkCount||0;
+  const isDirty=(proj.git_status||{}).is_dirty;const langName=(gh.primaryLanguage||{}).name||(proj.technologies||[])[0]||'?';
+  const langHex='#'+(LANG_COLORS[langName]||0x8b949e).toString(16).padStart(6,'0');
+  const ghUrl=proj.gh_slug?'https://github.com/'+proj.gh_slug:'';const localPath=proj.local_path||'';
+  const localUrl=localPath?'file:///'+localPath.replace(/\\\\/g,'/').replace(/\\/g,'/').replace(/^([A-Z]):/,(_,d)=>d.toLowerCase())+'/':'';
+  document.getElementById('dash-title').textContent=proj.display_name;
+  document.getElementById('dash-group').textContent=proj._group+' · '+(isPublic?'Public':'Private')+' · shape: '+proj._shape;
+  document.getElementById('dash-desc').textContent=proj.readme_description||gh.description||'';
+  const gs=proj.git_status||{};
+  document.getElementById('dash-stats').innerHTML=
+    `<div class="dstat"><div class="dstat-val">${stars}</div><div class="dstat-label">Stars</div></div>`+
+    `<div class="dstat"><div class="dstat-val">${forks}</div><div class="dstat-label">Forks</div></div>`+
+    `<div class="dstat"><div class="dstat-val">${(proj.commit_count||0)}</div><div class="dstat-label">Commits</div></div>`+
+    `<div class="dstat"><div class="dstat-val">${(proj.file_count||0).toLocaleString()}</div><div class="dstat-label">Files</div></div>`+
+    `<div class="dstat"><div class="dstat-val">${Object.keys(proj.branches||{}).length}</div><div class="dstat-label">Branches</div></div>`+
+    `<div class="dstat"><div class="dstat-val">${gs.is_dirty?'Dirty':'Clean'}</div><div class="dstat-label">Status</div></div>`;
+  let badges=`<span class="dbadge ${isPublic?'dbadge-public':'dbadge-private'}">${isPublic?'Public':'Private'}</span>`+
+    `<span class="dbadge ${isDirty?'dbadge-dirty':'dbadge-clean'}">${isDirty?'Dirty':'Clean'}</span>`+
+    `<span class="dbadge dbadge-lang" style="background:${langHex}">${langName}</span>`;
+  (proj.technologies||[]).slice(0,5).forEach(t=>{badges+=`<span class="dbadge dbadge-tech">${t}</span>`;});
+  document.getElementById('dash-badges').innerHTML=badges;
+  const branches=proj.branches||{};let bhtml='';Object.entries(branches).forEach(([n,i])=>{bhtml+=`<span class="dbranch${i.current?' current':''}">${i.current?'● ':''}${n}</span>`;});
+  document.getElementById('dash-branches').innerHTML=bhtml;
+  let links='';if(ghUrl)links+=`<a class="dlink dlink-gh" href="${ghUrl}" target="_blank">GitHub ↗</a>`;if(localUrl)links+=`<a class="dlink dlink-folder" href="${localUrl}" target="_blank">Open Folder</a>`;document.getElementById('dash-links').innerHTML=links;
+  dashboard.classList.add('open');
+}
+function hideDashboard(){dashboard.classList.remove('open');selectedIsland=null;}
+document.getElementById('dash-close').addEventListener('click',e=>{e.stopPropagation();hideDashboard();});
+
+renderer.domElement.addEventListener('click',event=>{
+  if(isAnimating)return;mouse.set((event.clientX/innerWidth)*2-1,-(event.clientY/innerHeight)*2+1);raycaster.setFromCamera(mouse,camera);
+  const hits=raycaster.intersectObjects(clickTargets);
+  if(hits.length>0){const island=hits[0].object.userData.islandGroup;selectedIsland=island;const p=island.position;
+    targetLookAt.copy(p);targetCamPos.copy(p).add(new THREE.Vector3(5,3.5,7));startCamPos.copy(camera.position);startTarget.copy(controls.target);animStart=performance.now();isAnimating=true;showDashboard(island.userData.project);}
+  else{hideDashboard();targetLookAt.set(0,-1,0);targetCamPos.set(30,22,45);startCamPos.copy(camera.position);startTarget.copy(controls.target);animStart=performance.now();isAnimating=true;}
+});
+
+// ── Legend ───────────────────────────────────────────────────────────────────
+const legend=document.getElementById('legend');const uGroups=[...new Set(repos.map(r=>r._group))];
+uGroups.forEach(g=>{const r=repos.find(p=>p._group===g);const nb='#'+(r._nebula||0x888888).toString(16).padStart(6,'0');legend.innerHTML+=`<div class="legend-item"><span class="legend-dot" style="background:${nb}"></span>${g}</div>`;});
+
+// ── Animation ────────────────────────────────────────────────────────────────
+const clock=new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.1);const t=performance.now()*.001;
+  if(isAnimating){const p=Math.min((performance.now()-animStart)/DUR,1);const e=1-Math.pow(1-p,3);camera.position.lerpVectors(startCamPos,targetCamPos,e);controls.target.lerpVectors(startTarget,targetLookAt,e);if(p>=1)isAnimating=false;}
+
+  // Animate all dynamic objects
+  islands.forEach(island=>{
+    island.traverse(child=>{
+      if(child.userData?.dirty){child.position.y+=Math.sin(t*child.userData.speed+child.userData.offset)*.002;}
+      if(child.userData?.rouletteBall){child.position.x=Math.cos(t*child.userData.speed)*child.userData.radius;child.position.z=Math.sin(t*child.userData.speed)*child.userData.radius;}
+      if(child.userData?.molecule){child.position.y+=Math.sin(t*child.userData.speed)*.004;child.position.x+=Math.cos(t*child.userData.speed)*.003;}
+      if(child.userData?.flow){child.position.y+=Math.sin(t*child.userData.speed+child.userData.offset)*.005;}
+      if(child.userData?.pulse){const s=child.userData.baseScale*(1+Math.sin(t*child.userData.speed)*.2);child.scale.setScalar(s);}
+      if(child.userData?.needle){child.rotation.y+=Math.sin(t*child.userData.speed)*.02;}
+      if(child.userData?.orbiter){const o=child.userData;child.position.x=Math.cos(t*o.speed+o.angle)*o.radius;child.position.z=Math.sin(t*o.speed+o.angle)*o.radius;}
+      if(child.userData?.swirl){const a=t*child.userData.speed+child.userData.offset;const r=.2+Math.sin(a)*.15;child.position.x=Math.cos(a)*r;child.position.z=Math.sin(a)*r;}
+    });
+  });
+
+  // Nebulae
+  scene.children.forEach(c=>{if(c.userData?.isNebula&&c.userData.material?.uniforms?.uTime){c.userData.material.uniforms.uTime.value=t;}});
+
+  floaters.rotation.y+=dt*.02;floaters.rotation.x+=dt*.005;
+  controls.update();renderer.render(scene,camera);
+}
+
+document.getElementById('hud-count').textContent=total;
+document.getElementById('loading').classList.add('done');setTimeout(()=>document.getElementById('loading').remove(),600);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+animate();
+</script>
+</body>
+</html>
