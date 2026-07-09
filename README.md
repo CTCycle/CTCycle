@@ -4,7 +4,7 @@
 
 **ML researcher building clinical and scientific AI tools**
 
-[![Portfolio Catalog](https://img.shields.io/badge/Portfolio-Catalog-58a6ff?style=flat-square)](https://ctcycle.github.io)
+[![Portfolio Catalog](https://img.shields.io/badge/Portfolio-Catalog-58a6ff?style=flat-square)](https://ctcycle.github.io/CTCycle/)
 [![GitHub](https://img.shields.io/badge/GitHub-CTCycle-333?style=flat-square&logo=github)](https://github.com/CTCycle)
 
 ---
@@ -18,8 +18,8 @@ All my public projects are browsable in two ways:
 
 | View | Description |
 |------|-------------|
-| [**HTML Catalog**](https://ctcycle.github.io) | Searchable, filterable project directory with stats and links |
-| [**3D Portfolio**](https://ctcycle.github.io/3d) | Interactive 3D scene -- each project as a unique island |
+| [**HTML Catalog**](https://ctcycle.github.io/CTCycle/) | Searchable, filterable project directory with stats and links |
+| [**3D Portfolio**](https://ctcycle.github.io/CTCycle/3d) | Interactive 3D scene -- each project as a unique island |
 
 ## Pinned Projects
 
