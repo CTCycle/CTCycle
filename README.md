@@ -1,41 +1,61 @@
-<h1 align="center">👋 I'm CTCycle, welcome to my GitHub! 👋 </h1>
+<div align="center">
 
-Hi, I’m Thomas (also known as CTCycle). I’m an Italian data science enthusiast with more than 10 years of experience, currently working as a Senior Data Scientist and ML Engineer at Inmatica S.p.A. My journey started in biotechnology. I earned a bachelor’s degree in Biotechnology from the University of Genoa, followed by a master’s in Advanced Biotechnologies and a PhD in Engineering Sciences at the Vrije Universiteit Brussel. During my PhD, I worked on the CheckPack project, developing micro-sensors to detect food spoilage and monitor quality. That project gave me hands-on experience in research and taught me how rewarding it can be to collaborate with both academic and industrial partners. During this time, I discovered how much I enjoy data analysis and machine learning. Since then, I’ve focused on exploring different types of datasets, from core STEM areas to complex biological domains. What excites me most is building tools that can improve healthcare, support drug discovery, and turn raw data into meaningful insights.
+# CTCycle
 
-I’m looking forward to connecting with this community, sharing my work, and learning from others who share the same curiosity and drive for innovation.
+**ML researcher building clinical and scientific AI tools**
 
-Happy coding to all!
-##
+[![Portfolio Catalog](https://img.shields.io/badge/Portfolio-Catalog-58a6ff?style=flat-square)](https://ctcycle.github.io)
+[![GitHub](https://img.shields.io/badge/GitHub-CTCycle-333?style=flat-square&logo=github)](https://github.com/CTCycle)
 
-<a href="https://github.com/CTCycle/github-profile-trophy">
-  <img src="https://github-profile-trophy-fawn-psi.vercel.app/?username=CTCycle" alt="CTCycle" />
-</a>
+---
 
- 
-![Thomas's GitHub stats](https://github-readme-stats-beta-ten-32.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green)
+*Reinforcement learning, medical AI, scientific computing, and LLM tooling*
+</div>
 
+## Portfolio
 
-##
+All my public projects are browsable in two ways:
 
-Skills and tools:
+| View | Description |
+|------|-------------|
+| [**HTML Catalog**](https://ctcycle.github.io) | Searchable, filterable project directory with stats and links |
+| [**3D Portfolio**](https://ctcycle.github.io/3d) | Interactive 3D scene -- each project as a unique island |
 
-<p align="left">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" width="40"/>
-  <img src="https://www.svgrepo.com/show/354202/postman-icon.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/intellij/intellij-original.svg" width="40"/>
-</p>
+## Pinned Projects
 
-##
+### [FAIRS Roulette Player](https://github.com/CTCycle/FAIRS-Roulette-Player)
+Reinforcement learning (DQN) agent that learns to play roulette. FastAPI + React + Tauri desktop.
+`Python` `PyTorch` `React` `Tauri` `FastAPI`
+[![Stars](https://img.shields.io/github/stars/CTCycle/FAIRS-Roulette-Player?style=flat-square)](https://github.com/CTCycle/FAIRS-Roulette-Player)
+[![CI](https://github.com/CTCycle/FAIRS-Roulette-Player/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/CTCycle/FAIRS-Roulette-Player/actions/workflows/ci.yml?query=branch%3Adevelop)
 
-- 🔭 **What I'm working on?** I'm currently immersed in several Python projects. Feel free to browse my repositories to see the exciting work I've been doing!
-- 🌱 **What I'm learning?** right now, I'm expanding my programming skills by learning Java, one line of code at a time. I'm excited to delve into other languages and continue growing my skill set. I'd like to learn a bit more about front-end development too!
+### [XREPORT Radiological Reports](https://github.com/CTCycle/XREPORT-radiological-reports-generator)
+Automatic generation of descriptive radiological reports from X-ray scans using vision-language models.
+`Python` `Computer Vision` `NLP` `Transformers` `Clinical AI`
+[![Stars](https://img.shields.io/github/stars/CTCycle/XREPORT-radiological-reports-generator?style=flat-square)](https://github.com/CTCycle/XREPORT-radiological-reports-generator)
+
+### [ADSMOD Adsorption Modeling](https://github.com/CTCycle/ADSMOD-Adsorption-Modeling)
+ML-driven adsorption isotherm modeling -- fit theoretical models to empirical data and predict gas uptake.
+`Python` `SciML` `NIST Databases` `Chemical Engineering`
+[![Stars](https://img.shields.io/github/stars/CTCycle/ADSMOD-Adsorption-Modeling?style=flat-square)](https://github.com/CTCycle/ADSMOD-Adsorption-Modeling)
+
+### More Projects
+
+| Project | Area | Status |
+|---------|------|--------|
+| [DILIGENT Clinical Copilot](https://github.com/CTCycle/DILIGENT-Clinical-Copilot) | LLM-powered DILI detection | Active |
+| [TKBEN Tokenizer Benchmarker](https://github.com/CTCycle/TKBEN-tokenizers-benchmarker) | Tokenizer evaluation suite | Active |
+| [ParaGraph LLM Workflow](https://github.com/CTCycle/ParaGraph-LLM-workflow) | ComfyUI-inspired graph workflow builder | Active |
+| [AEGIS Geospatial View](https://github.com/CTCycle/AEGIS-Geospatial-View) | 1000+ geospatial data sources | Active |
+| [EMADB Autopilot](https://github.com/CTCycle/EMADB-Autopilot) | Automated EudraVigilance data extraction | Maintained |
+| [FEXT Autoencoder](https://github.com/CTCycle/FEXT-Autoencoder) | VVG16-inspired image feature extraction | Maintained |
+
+---
+
+<div align="center">
+
+**Let's connect**
+
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat-square&logo=linkedin)](https://linkedin.com/in/thomasvirdis)
+[![Medium](https://img.shields.io/badge/-Medium-000?style=flat-square&logo=medium)](https://medium.com/@thomasvirdis)
+</div>
