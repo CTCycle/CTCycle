@@ -1,1485 +1,799 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GitHub Portfolio — CTCycle</title>
-<style>
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface-hover: #1c2330;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-muted: #8b949e;
-    --text-dim: #6e7681;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --red: #f85149;
-    --yellow: #d29922;
-    --orange: #db6d28;
-    --divider: #21262d;
-    --card-radius: 8px;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.5;
-    padding: 32px 24px;
-  }
-  .container { max-width: 1200px; margin: 0 auto; }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Portfolio of Thomas Virdis, an ML researcher and data scientist working across clinical and scientific AI.">
+  <title>CTCycle | Thomas Virdis</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0e1416;
+      --surface: #151d20;
+      --surface-hover: #182326;
+      --text: #eef3ed;
+      --muted: #aebbb3;
+      --quiet: #84938b;
+      --line: #2a3838;
+      --accent: #76d4a6;
+      --focus: #f5bf63;
+      --max-width: 1240px;
+    }
 
-  .header {
-    display: flex; align-items: center; gap: 16px;
-    margin-bottom: 24px; padding-bottom: 24px;
-    border-bottom: 1px solid var(--divider);
-  }
-  .header svg { flex-shrink: 0; }
-  .header h1 { font-size: 24px; font-weight: 600; }
-  .header .meta { color: var(--text-muted); font-size: 14px; margin-top: 2px; }
+    * {
+      box-sizing: border-box;
+    }
 
-  .controls {
-    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
-    align-items: center;
-  }
-  #search {
-    flex: 1; min-width: 200px;
-    padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border);
-    background: var(--surface); color: var(--text); font-size: 14px;
-    outline: none; transition: border-color 0.2s;
-  }
-  #search:focus { border-color: var(--accent); }
-  #search::placeholder { color: var(--text-dim); }
+    html {
+      scroll-behavior: smooth;
+    }
 
-  .filter-group, .sort-group { display: flex; gap: 6px; flex-wrap: wrap; }
-  .filter-btn, .sort-btn {
-    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
-    background: transparent; color: var(--text-muted); font-size: 13px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .filter-btn:hover, .sort-btn:hover { border-color: var(--text-muted); color: var(--text); }
-  .filter-btn.active, .sort-btn.active {
-    background: var(--accent); border-color: var(--accent); color: #fff;
-  }
-  .ctrl-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+    body {
+      min-width: 320px;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      text-rendering: optimizeLegibility;
+    }
 
-  .stats-bar {
-    display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;
-    padding: 16px; background: var(--surface); border-radius: var(--card-radius);
-    border: 1px solid var(--border);
-  }
-  .stat { display: flex; flex-direction: column; }
-  .stat-value { font-size: 22px; font-weight: 600; }
-  .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    a {
+      color: inherit;
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.18em;
+    }
 
-  .section { margin-bottom: 28px; }
-  .section-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 14px; padding-bottom: 8px;
-    border-bottom: 1px solid var(--divider);
-  }
-  .section-title { font-size: 18px; font-weight: 600; }
-  .section-count { font-size: 13px; color: var(--text-muted); background: var(--surface); padding: 2px 10px; border-radius: 12px; }
+    a:hover {
+      color: var(--accent);
+    }
 
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--card-radius); padding: 16px 20px;
-    margin-bottom: 8px; transition: border-color 0.2s, background 0.2s;
-  }
-  .card:hover { border-color: #484f58; background: var(--surface-hover); }
-  .card.hidden { display: none; }
+    a:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
 
-  .card-header {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    gap: 12px; margin-bottom: 8px;
-  }
-  .card-name {
-    font-size: 16px; font-weight: 600; color: var(--accent); text-decoration: none;
-  }
-  .card-name:hover { text-decoration: underline; }
+    .skip-link {
+      position: absolute;
+      top: -5rem;
+      left: 1rem;
+      z-index: 10;
+      padding: 0.7rem 0.9rem;
+      background: var(--text);
+      color: var(--bg);
+      font-weight: 750;
+    }
 
-  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;
-    white-space: nowrap;
-  }
-  .badge-public { background: #1a3a2a; color: var(--green); border: 1px solid #2ea043; }
-  .badge-private { background: #1c2128; color: var(--text-muted); border: 1px solid var(--border); }
-  .badge-lang { color: #fff; }
-  .badge-ahead { background: #1a3a2a; color: var(--green); border: 1px solid #2ea043; }
-  .badge-behind { background: #3d1f1f; color: var(--red); border: 1px solid #da3633; }
-  .badge-tag { background: #1c2128; color: var(--yellow); border: 1px solid #7a5f0d; }
-  .badge-dirty { background: #3d2e0f; color: var(--yellow); border: 1px solid #bb8009; }
-  .badge-clean { background: #1a2a1a; color: var(--green); border: 1px solid #1f6f1f; }
-  .badge-remote { background: #1c1c2a; color: #a371f7; border: 1px solid #5a3d99; }
-  .badge-local-only { background: #2a1c1c; color: var(--orange); border: 1px solid #8b5a2b; }
-  .badge-stars { background: #1c2128; color: var(--yellow); border: 1px solid #7a5f0d; }
+    .skip-link:focus {
+      top: 1rem;
+    }
 
-  .card-desc {
-    color: var(--text-muted); font-size: 13px; margin-bottom: 10px; line-height: 1.4;
-  }
-  .card-details {
-    display: flex; flex-wrap: wrap; gap: 16px;
-    font-size: 12px; color: var(--text-dim);
-  }
-  .card-details span { display: inline-flex; align-items: center; gap: 4px; }
-  .card-details a { color: var(--text-dim); text-decoration: none; }
-  .card-details a:hover { color: var(--accent); }
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1.35rem 1.5rem;
+      border-bottom: 1px solid var(--line);
+    }
 
-  .branches-list {
-    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--divider);
-    display: flex; flex-wrap: wrap; gap: 4px;
-  }
-  .branch-tag {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 1px 8px; border-radius: 4px;
-    background: #1c2128; border: 1px solid var(--border);
-    font-size: 11px; font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
-  }
-  .branch-tag.current { border-color: var(--accent); color: var(--accent); }
+    .wordmark {
+      color: var(--text);
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-decoration: none;
+    }
 
-  .tech-tags {
-    margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px;
-  }
-  .tech-tag {
-    padding: 1px 7px; border-radius: 4px; font-size: 10px; font-weight: 500;
-    background: #1c2128; color: var(--text-muted); border: 1px solid var(--border);
-  }
+    .wordmark:hover {
+      color: var(--accent);
+    }
 
-  .no-results {
-    text-align: center; padding: 48px 0; color: var(--text-dim);
-    font-size: 16px;
-  }
+    .primary-nav ul,
+    .sidebar-nav ul,
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.2rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
 
-  @media (max-width: 600px) {
-    body { padding: 16px 12px; }
-    .stats-bar { flex-wrap: wrap; gap: 12px; }
-    .card-header { flex-direction: column; }
-    .controls { flex-direction: column; align-items: stretch; }
-  }
-</style>
+    .primary-nav a,
+    .sidebar-nav a {
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-decoration: none;
+    }
+
+    .primary-nav a:hover,
+    .sidebar-nav a:hover {
+      color: var(--accent);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: clamp(3rem, 7vw, 7rem);
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 4rem 1.5rem 5rem;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+    }
+
+    .sidebar-name {
+      margin: 0 0 0.4rem;
+      font-size: 1.12rem;
+      letter-spacing: -0.03em;
+    }
+
+    .sidebar-intro p,
+    .profile-facts dd {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .profile-facts {
+      margin: 2rem 0 0;
+    }
+
+    .profile-facts > div {
+      padding: 1rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .profile-facts dt,
+    .section-index,
+    .kicker,
+    .work-kind,
+    .focus-card h3,
+    .background-label,
+    .toolchain-card h3 {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.72rem;
+      font-weight: 750;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .profile-facts dt {
+      margin-bottom: 0.35rem;
+    }
+
+    .sidebar-nav {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .sidebar-nav ul {
+      display: block;
+    }
+
+    .sidebar-nav li + li {
+      margin-top: 0.25rem;
+    }
+
+    .content {
+      min-width: 0;
+    }
+
+    .hero {
+      padding: 3rem 0 5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      margin: 0 0 1.2rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      overflow-wrap: anywhere;
+    }
+
+    h1 {
+      max-width: 12ch;
+      margin: 0;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+    }
+
+    .hero-copy {
+      max-width: 48rem;
+      margin: 1.6rem 0 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+      line-height: 1.55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 2rem;
+    }
+
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.75rem;
+      padding: 0.65rem 1rem;
+      border: 1px solid var(--text);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    .button-link:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+
+    .button-link.secondary {
+      border-color: var(--line);
+      color: var(--muted);
+    }
+
+    .button-link.secondary:hover {
+      border-color: var(--text);
+      background: transparent;
+      color: var(--text);
+    }
+
+    .section {
+      padding-top: 5rem;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-index {
+      margin: 0 0 0.4rem;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      letter-spacing: -0.04em;
+    }
+
+    .section-heading > p {
+      max-width: 31rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .work-list {
+      border-top: 1px solid var(--line);
+    }
+
+    .work-row {
+      display: grid;
+      grid-template-columns: 4rem minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: start;
+      padding: 1.6rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .work-row:hover {
+      background: var(--surface-hover);
+    }
+
+    .work-index {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.82rem;
+      font-weight: 750;
+    }
+
+    .work-kind {
+      margin: 0 0 0.45rem;
+    }
+
+    .work-row h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1.25rem;
+      letter-spacing: -0.03em;
+    }
+
+    .work-row p:not(.work-kind) {
+      max-width: 48rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .tags {
+      gap: 0.45rem;
+      margin-top: 1rem;
+    }
+
+    .tags li {
+      padding: 0.25rem 0.55rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.72rem;
+    }
+
+    .work-link {
+      align-self: center;
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.76rem;
+      white-space: nowrap;
+    }
+
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .focus-card {
+      min-height: 10rem;
+      padding: 1.25rem;
+      background: var(--surface);
+    }
+
+    .focus-card h3 {
+      margin: 0 0 0.7rem;
+    }
+
+    .focus-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .background-list {
+      border-top: 1px solid var(--line);
+    }
+
+    .background-row {
+      display: grid;
+      grid-template-columns: 7rem minmax(0, 1fr);
+      gap: 1.5rem;
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .background-label {
+      padding-top: 0.2rem;
+    }
+
+    .background-row h3 {
+      margin: 0 0 0.3rem;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .background-row p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .toolchain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .toolchain-card {
+      min-height: 10rem;
+      padding: 1.1rem;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .toolchain-card h3 {
+      margin: 0 0 0.7rem;
+    }
+
+    .toolchain-card p {
+      margin: 0;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.8;
+    }
+
+    .contact {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .contact h2 {
+      max-width: 14ch;
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.07em;
+    }
+
+    .site-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      color: var(--quiet);
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.72rem;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .profile-facts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column: 1 / -1;
+        gap: 1rem 2rem;
+        margin-top: 1rem;
+      }
+
+      .profile-facts > div {
+        padding-top: 1rem;
+      }
+
+      .sidebar-nav {
+        margin-top: 0;
+      }
+
+      .toolchain-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+        padding-inline: 1rem;
+      }
+
+      .primary-nav ul {
+        gap: 0.7rem 1rem;
+      }
+
+      .layout {
+        padding: 2.5rem 1rem 4rem;
+      }
+
+      .sidebar {
+        display: block;
+      }
+
+      .profile-facts {
+        display: block;
+      }
+
+      .profile-facts > div + div {
+        margin-top: 0;
+      }
+
+      .sidebar-nav {
+        margin-top: 1rem;
+      }
+
+      .hero {
+        padding: 3rem 0 4rem;
+      }
+
+      h1 {
+        max-width: 100%;
+        font-size: clamp(2.8rem, 15vw, 4.7rem);
+      }
+
+      .section {
+        padding-top: 4rem;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+
+      .work-row {
+        grid-template-columns: 2rem minmax(0, 1fr);
+        gap: 0.5rem 1rem;
+      }
+
+      .work-link {
+        grid-column: 2;
+        justify-self: start;
+      }
+
+      .focus-grid,
+      .toolchain-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .background-row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+      }
+
+      .contact,
+      .site-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container" id="app">
-  <div class="header">
-    <svg width="40" height="40" viewBox="0 0 16 16" fill="white">
-      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
-    </svg>
-    <div>
-      <h1>GitHub Portfolio</h1>
-      <div class="meta">CTCycle &middot; <span id="total-repos">--</span> projects &middot; Updated <span id="update-date">--</span></div>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="CTCycle home">CTCycle</a>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <ul>
+        <li><a href="#profile">Profile</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#focus">Focus</a></li>
+        <li><a href="#background">Background</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="layout">
+    <aside id="profile" class="sidebar" aria-label="Profile summary">
+      <div class="sidebar-intro">
+        <p class="sidebar-name">Thomas Virdis</p>
+        <p>ML researcher and data scientist.</p>
+      </div>
+
+      <dl class="profile-facts">
+        <div>
+          <dt>Role</dt>
+          <dd>Senior Data Scientist &amp; ML Engineer<br>Inmatica S.p.A.</dd>
+        </div>
+        <div>
+          <dt>Location</dt>
+          <dd>Lugano</dd>
+        </div>
+        <div>
+          <dt>Focus</dt>
+          <dd>Clinical AI, reinforcement learning, scientific computing, and LLM tooling.</dd>
+        </div>
+      </dl>
+
+      <nav class="sidebar-nav" aria-label="Page sections">
+        <ul>
+          <li><a href="#work">Selected work</a></li>
+          <li><a href="#focus">Current focus</a></li>
+          <li><a href="#background">Background</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <div class="content">
+      <section id="top" class="hero" aria-labelledby="hero-title">
+        <p class="kicker">Open-source machine learning</p>
+        <h1 id="hero-title">Applied machine learning for clinical and scientific workflows.</h1>
+        <p class="hero-copy">I build open-source tools across clinical AI, reinforcement learning, scientific computing, and LLM tooling.</p>
+        <div class="actions">
+          <a class="button-link" href="#work">View selected work</a>
+          <a class="button-link secondary" href="#contact">Get in touch</a>
+        </div>
+      </section>
+
+      <section id="work" class="section" aria-labelledby="work-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">01</p>
+            <h2 id="work-title">Selected work</h2>
+          </div>
+          <p>Three projects that show the main areas of my work.</p>
+        </div>
+
+        <div class="work-list">
+          <article class="work-row">
+            <div class="work-index" aria-hidden="true">01</div>
+            <div>
+              <p class="work-kind">Research application</p>
+              <h3>FAIRS Roulette Player</h3>
+              <p>Research application for roulette training and inference experiments. It includes a DQN agent, a PyTorch training pipeline, a FastAPI backend, a React frontend, and a Tauri desktop shell.</p>
+              <ul class="tags" aria-label="FAIRS technologies">
+                <li>Reinforcement learning</li>
+                <li>PyTorch</li>
+                <li>React</li>
+                <li>Tauri</li>
+              </ul>
+            </div>
+            <a class="work-link" href="https://github.com/CTCycle/FAIRS-Roulette-Player" target="_blank" rel="noreferrer">Open repository</a>
+          </article>
+
+          <article class="work-row">
+            <div class="work-index" aria-hidden="true">02</div>
+            <div>
+              <p class="work-kind">Clinical workflow</p>
+              <h3>XREPORT Radiological Reports</h3>
+              <p>Client-server application for generating draft radiological reports from X-ray images. It supports dataset preparation, model training, validation, and report generation.</p>
+              <ul class="tags" aria-label="XREPORT technologies">
+                <li>Medical AI</li>
+                <li>Transformers</li>
+                <li>FastAPI</li>
+                <li>React</li>
+              </ul>
+            </div>
+            <a class="work-link" href="https://github.com/CTCycle/XREPORT-radiological-reports-generator" target="_blank" rel="noreferrer">Open repository</a>
+          </article>
+
+          <article class="work-row">
+            <div class="work-index" aria-hidden="true">03</div>
+            <div>
+              <p class="work-kind">Scientific computing</p>
+              <h3>ADSMOD Adsorption Modeling</h3>
+              <p>Application for collecting, managing, and modeling adsorption data. It fits theoretical models to empirical isotherms and works with NIST and ARPA-E datasets.</p>
+              <ul class="tags" aria-label="ADSMOD technologies">
+                <li>Scientific ML</li>
+                <li>Python</li>
+                <li>RDKit</li>
+                <li>NIST</li>
+              </ul>
+            </div>
+            <a class="work-link" href="https://github.com/CTCycle/ADSMOD-Adsorption-Modeling" target="_blank" rel="noreferrer">Open repository</a>
+          </article>
+        </div>
+      </section>
+
+      <section id="focus" class="section" aria-labelledby="focus-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">02</p>
+            <h2 id="focus-title">Current focus</h2>
+          </div>
+          <p>What I am building, learning, and looking for.</p>
+        </div>
+
+        <div class="focus-grid">
+          <article class="focus-card">
+            <h3>Building</h3>
+            <p>Open-source ML tools for clinical research, medical imaging, reinforcement learning, computational chemistry, and LLM workflows.</p>
+          </article>
+          <article class="focus-card">
+            <h3>Learning</h3>
+            <p>Front-end development and productionizing ML with Rust.</p>
+          </article>
+          <article class="focus-card">
+            <h3>Looking for</h3>
+            <p>Collaborations involving biotechnology, healthcare, and machine learning.</p>
+          </article>
+          <article class="focus-card">
+            <h3>Ask me about</h3>
+            <p>Reinforcement learning, medical AI, or moving from biotechnology research into machine learning.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="background" class="section" aria-labelledby="background-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">03</p>
+            <h2 id="background-title">Background</h2>
+          </div>
+          <p>A concise view of the path behind the projects.</p>
+        </div>
+
+        <div class="background-list">
+          <article class="background-row">
+            <div class="background-label">Now</div>
+            <div>
+              <h3>Senior Data Scientist &amp; ML Engineer at Inmatica S.p.A.</h3>
+              <p>Applied AI tools for clinical and scientific workflows.</p>
+            </div>
+          </article>
+          <article class="background-row">
+            <div class="background-label">Research</div>
+            <div>
+              <h3>PhD in Engineering Sciences at the Vrije Universiteit Brussel</h3>
+              <p>Worked on CheckPack, developing micro-sensors to detect food spoilage and monitor quality in real time.</p>
+            </div>
+          </article>
+          <article class="background-row">
+            <div class="background-label">Foundation</div>
+            <div>
+              <h3>Bachelor's and master's studies in Biotechnology at the University of Genoa</h3>
+              <p>Training in biotechnology, data analysis, and experimental research.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="toolchain-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-index">04</p>
+            <h2 id="toolchain-title">Toolchain</h2>
+          </div>
+          <p>Technologies used across the projects above.</p>
+        </div>
+
+        <div class="toolchain-grid">
+          <article class="toolchain-card"><h3>Languages</h3><p>Python<br>Java<br>JavaScript<br>SQL<br>Bash</p></article>
+          <article class="toolchain-card"><h3>ML / DL</h3><p>PyTorch<br>TensorFlow<br>Transformers<br>Hugging Face<br>LangChain</p></article>
+          <article class="toolchain-card"><h3>Infrastructure</h3><p>Docker<br>Kubernetes<br>Linux<br>REST APIs<br>PostgreSQL</p></article>
+          <article class="toolchain-card"><h3>Scientific</h3><p>RDKit<br>NumPy / SciPy<br>Pandas<br>NIST databases<br>ARPA-E</p></article>
+          <article class="toolchain-card"><h3>Workflow</h3><p>Git<br>GitHub Actions<br>Jupyter<br>VS Code<br>CI/CD</p></article>
+          <article class="toolchain-card"><h3>Education</h3><p>Biotechnology<br>Engineering Sciences<br>Experimental research<br>Data analysis<br>Open source</p></article>
+        </div>
+      </section>
+
+      <section id="contact" class="section" aria-labelledby="contact-title">
+        <div class="contact">
+          <h2 id="contact-title">For collaborations and conversations.</h2>
+          <div class="actions">
+            <a class="button-link" href="https://www.linkedin.com/in/thomas-virdis/" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a class="button-link secondary" href="https://medium.com/@thomasvirdis" target="_blank" rel="noreferrer">Medium</a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="site-footer">
+        <span>CTCycle / Thomas Virdis</span>
+        <span>Clinical AI / reinforcement learning / scientific computing</span>
+      </footer>
     </div>
-  </div>
-
-  <div class="controls">
-    <input type="text" id="search" placeholder="Search by name, description, technology, language..." oninput="filterRepos()">
-    <div class="ctrl-sep"></div>
-    <div class="filter-group" id="filter-btns"></div>
-    <div class="ctrl-sep"></div>
-    <div class="sort-group">
-      <button class="sort-btn active" data-sort="group" onclick="setSort('group')">Group</button>
-      <button class="sort-btn" data-sort="name" onclick="setSort('name')">Name</button>
-      <button class="sort-btn" data-sort="stars" onclick="setSort('stars')">Stars</button>
-      <button class="sort-btn" data-sort="updated" onclick="setSort('updated')">Updated</button>
-    </div>
-  </div>
-
-  <div class="stats-bar" id="stats-bar"></div>
-  <div id="sections"></div>
-</div>
-
-<script>
-const DATA = {
-"generated_at": "2026-07-10 00:18",
-"github_owner": "CTCycle",
-"total_repos": 9,
-"sources": {
-"local": 15,
-"local_only": 2,
-"remote_only": 1
-},
-"repos": [
-{
-"display_name": "ADSMOD Adsorption Modeling",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\ADSMOD Adsorption Modeling",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/ADSMOD-Adsorption-Modeling.git",
-"push": "https://github.com/CTCycle/ADSMOD-Adsorption-Modeling.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "279430a",
-"message": "Add CTCycle portfolio badge to README"
-},
-"main": {
-"current": false,
-"sha": "e8394e8",
-"message": "Merge remote-tracking branch 'origin/main'"
-}
-},
-"last_commit": {
-"sha": "279430a",
-"message": "Add CTCycle portfolio badge to README"
-},
-"last_tag": "v2.3.0",
-"last_fetch": "2026-07-09 14:31",
-"ahead": 6,
-"behind": 45,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 1,
-"changed_count": 6,
-"conflict_count": 0
-},
-"file_count": 396,
-"commit_count": 552,
-"technologies": [
-"Unknown"
-],
-"readme_description": "ADSMOD is a comprehensive web application designed for the collection, management, and modeling of adsorption data. This project represents the evolution and unification of two predecessor projects: **ADSORFIT** and **NISTADS Adsorption Modeling** (the former name of this repository).",
-"gh_slug": "CTCycle/ADSMOD-Adsorption-Modeling",
-"gh": {
-"createdAt": "2023-09-29T07:44:02Z",
-"description": "Streamline adsorption modeling by automatically fitting theoretical adsorption models to empirical isotherm data and by training a machine learning model on adsorption isotherms from the NIST and ARPA-E databases to predict uptake as a function of pressure.",
-"forkCount": 1,
-"homepageUrl": "https://adsorption.nist.gov/isodb/index.php#home",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 752997,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 43886,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 1040,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 254261,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 78534,
-"node": {
-"name": "CSS"
-}
-},
-{
-"size": 6678,
-"node": {
-"name": "PowerShell"
-}
-},
-{
-"size": 19701,
-"node": {
-"name": "Rust"
-}
-},
-{
-"size": 1218,
-"node": {
-"name": "JavaScript"
-}
-}
-],
-"name": "ADSMOD-Adsorption-Modeling",
-"nameWithOwner": "CTCycle/ADSMOD-Adsorption-Modeling",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 3,
-"updatedAt": "2026-06-06T11:11:21Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "AEGIS Geospatial View",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\AEGIS Geospatial View",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/AEGIS-Geospatial-View.git",
-"push": "https://github.com/CTCycle/AEGIS-Geospatial-View.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "84b91d7",
-"message": "upgrade: Angular v19.2.25 -> v22.0.5 (sequential v19->v20->v21->v22)"
-},
-"main": {
-"current": false,
-"sha": "4ab1b3f",
-"message": "Merge branch 'develop'"
-}
-},
-"last_commit": {
-"sha": "84b91d7",
-"message": "upgrade: Angular v19.2.25 -> v22.0.5 (sequential v19->v20->v21->v22)"
-},
-"last_tag": "",
-"last_fetch": "2026-07-08 10:06",
-"ahead": 9,
-"behind": 1,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 1,
-"changed_count": 0,
-"conflict_count": 0
-},
-"file_count": 595,
-"commit_count": 555,
-"technologies": [
-"Unknown"
-],
-"readme_description": "AEGIS Geospatial View is a place-focused workspace built around conversation.",
-"gh_slug": "CTCycle/AEGIS-Geospatial-View",
-"gh": {
-"createdAt": "2025-10-10T08:09:11Z",
-"description": "Explore geospatial data through a dedicated web app that provides access to more than a thousand data sources.",
-"forkCount": 0,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 1808795,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 47011,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 39331,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 53080,
-"node": {
-"name": "CSS"
-}
-},
-{
-"size": 327036,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 4270,
-"node": {
-"name": "PowerShell"
-}
-},
-{
-"size": 2548,
-"node": {
-"name": "JavaScript"
-}
-}
-],
-"name": "AEGIS-Geospatial-View",
-"nameWithOwner": "CTCycle/AEGIS-Geospatial-View",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 0,
-"updatedAt": "2026-07-08T08:07:12Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "DILIGENT Clinical Copilot",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\DILIGENT Clinical Copilot",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/DILIGENT-Clinical-Copilot.git",
-"push": "https://github.com/CTCycle/DILIGENT-Clinical-Copilot.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "585605a8",
-"message": "Refactor: Remove unnecessary blank lines across multiple files for improved readability"
-},
-"latest-changes": {
-"current": false,
-"sha": "228a3346",
-"message": "[gone] Refactor JobState and JobManager for improved result handling and type consistency"
-},
-"main": {
-"current": false,
-"sha": "0fa75367",
-"message": "Restore packaged model resource directory"
-}
-},
-"last_commit": {
-"sha": "585605a8",
-"message": "Refactor: Remove unnecessary blank lines across multiple files for improved readability"
-},
-"last_tag": "v2.3.0",
-"last_fetch": "2026-07-09 17:04",
-"ahead": 0,
-"behind": 5,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 25,
-"changed_count": 0,
-"conflict_count": 0
-},
-"file_count": 731,
-"commit_count": 1040,
-"technologies": [
-"Unknown"
-],
-"readme_description": "DILIGENT Clinical Copilot supports clinicians during Drug-Induced Liver Injury (DILI) evaluations with a FastAPI backend and an Angular + TypeScript frontend. It collects anamnesis, medications, and lab values, then coordinates clinical analysis with optional RAG support and session persistence f...",
-"gh_slug": "CTCycle/DILIGENT-Clinical-Copilot",
-"gh": {
-"createdAt": "2025-08-19T06:59:03Z",
-"description": "An AI-powered clinical copilot designed to assist physicians in detecting and managing Drug-Induced Liver Injury (DILI), leveraging the capabilities of large language models (LLMs).",
-"forkCount": 0,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 2796125,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 45964,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 104637,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 268211,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 25616,
-"node": {
-"name": "Rust"
-}
-},
-{
-"size": 17648,
-"node": {
-"name": "PowerShell"
-}
-},
-{
-"size": 6981,
-"node": {
-"name": "JavaScript"
-}
-},
-{
-"size": 234045,
-"node": {
-"name": "SCSS"
-}
-}
-],
-"name": "DILIGENT-Clinical-Copilot",
-"nameWithOwner": "CTCycle/DILIGENT-Clinical-Copilot",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 0,
-"updatedAt": "2026-07-06T16:57:29Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "FAIRS Roulette Player",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\FAIRS Roulette Player",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/FAIRS-Roulette-Player.git",
-"push": "https://github.com/CTCycle/FAIRS-Roulette-Player.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "037ae04",
-"message": "Add CTCycle portfolio badge to README"
-},
-"main": {
-"current": false,
-"sha": "40f8991",
-"message": "Merge branch 'develop'"
-}
-},
-"last_commit": {
-"sha": "037ae04",
-"message": "Add CTCycle portfolio badge to README"
-},
-"last_tag": "v2.4.0",
-"last_fetch": "2026-07-08 10:06",
-"ahead": 6,
-"behind": 2,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 1,
-"staged_count": 0,
-"changed_count": 0,
-"conflict_count": 0
-},
-"file_count": 194,
-"commit_count": 523,
-"technologies": [
-"Unknown"
-],
-"readme_description": "FAIRS is a research web application for roulette training and inference experiments. It includes: - A FastAPI backend for dataset ingestion, training orchestration, checkpoint management, inference sessions, and persistence. - A React + Vite frontend for training and inference workflows. - An opt...",
-"gh_slug": "CTCycle/FAIRS-Roulette-Player",
-"gh": {
-"createdAt": "2023-10-16T14:28:07Z",
-"description": "Learn to play roulette using Reinforcement Learning (RL) with a DQN agent",
-"forkCount": 0,
-"homepageUrl": "https://github.com/CTCycle/FAIRS-Roulette-Player",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 415849,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 47451,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 616,
-"node": {
-"name": "JavaScript"
-}
-},
-{
-"size": 369,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 201700,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 44410,
-"node": {
-"name": "CSS"
-}
-},
-{
-"size": 4835,
-"node": {
-"name": "PowerShell"
-}
-}
-],
-"name": "FAIRS-Roulette-Player",
-"nameWithOwner": "CTCycle/FAIRS-Roulette-Player",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 6,
-"updatedAt": "2026-07-09T22:04:33Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "ParaGraph LLM Workflow",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\ParaGraph LLM Workflow",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/ParaGraph-LLM-workflow.git",
-"push": "https://github.com/CTCycle/ParaGraph-LLM-workflow.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "92289ab",
-"message": "[ahead 1] Add MIT License"
-},
-"main": {
-"current": false,
-"sha": "6eb7f27",
-"message": "Merge branch 'develop'"
-}
-},
-"last_commit": {
-"sha": "92289ab",
-"message": "Add MIT License"
-},
-"last_tag": "",
-"last_fetch": "2026-07-08 23:34",
-"ahead": 7,
-"behind": 1,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 1,
-"changed_count": 2,
-"conflict_count": 0
-},
-"file_count": 439,
-"commit_count": 169,
-"technologies": [
-"Unknown"
-],
-"readme_description": "ParaGraph is a local application for planning, running, and observing LLM workflows in a visual way.",
-"gh_slug": "CTCycle/ParaGraph-LLM-workflow",
-"gh": {
-"createdAt": "2026-03-08T00:34:12Z",
-"description": "A graph-based web application inspired by ComfyUI, designed for creating custom LLM-powered workflows and nodes.",
-"forkCount": 0,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 524,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 433660,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 66094,
-"node": {
-"name": "CSS"
-}
-},
-{
-"size": 1034390,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 47637,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 4807,
-"node": {
-"name": "PowerShell"
-}
-},
-{
-"size": 892,
-"node": {
-"name": "JavaScript"
-}
-},
-{
-"size": 25860,
-"node": {
-"name": "Rust"
-}
-}
-],
-"name": "ParaGraph-LLM-workflow",
-"nameWithOwner": "CTCycle/ParaGraph-LLM-workflow",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 0,
-"updatedAt": "2026-07-09T22:04:30Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "TKBEN Benchmarker",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\TKBEN Benchmarker",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/TKBEN-tokenizers-benchmarker.git",
-"push": "https://github.com/CTCycle/TKBEN-tokenizers-benchmarker.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "80b6889",
-"message": "Disable setup-node cache on develop CI"
-},
-"main": {
-"current": false,
-"sha": "e996f2b",
-"message": "Merge branch 'develop'"
-}
-},
-"last_commit": {
-"sha": "80b6889",
-"message": "Disable setup-node cache on develop CI"
-},
-"last_tag": "v3.5.0",
-"last_fetch": "2026-07-08 23:36",
-"ahead": 2,
-"behind": 0,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 1,
-"changed_count": 0,
-"conflict_count": 0
-},
-"file_count": 245,
-"commit_count": 380,
-"technologies": [
-"Unknown"
-],
-"readme_description": "TKBEN is a tokenizer benchmarking platform for text datasets and tokenizer assets.",
-"gh_slug": "CTCycle/TKBEN-tokenizers-benchmarker",
-"gh": {
-"createdAt": "2024-09-13T10:55:00Z",
-"description": "Explore and benchmark public and custom tokenizers from HuggingFace using different SOTA metrics",
-"forkCount": 1,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 777848,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 46107,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 636,
-"node": {
-"name": "JavaScript"
-}
-},
-{
-"size": 406,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 57623,
-"node": {
-"name": "CSS"
-}
-},
-{
-"size": 283740,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 4891,
-"node": {
-"name": "PowerShell"
-}
-},
-{
-"size": 19215,
-"node": {
-"name": "Rust"
-}
-}
-],
-"name": "TKBEN-tokenizers-benchmarker",
-"nameWithOwner": "CTCycle/TKBEN-tokenizers-benchmarker",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 0,
-"updatedAt": "2026-07-08T21:36:15Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "XREPORT Radiological Reports",
-"group": "Active",
-"local_path": "G:\\Projects\\Repositories\\Active projects\\XREPORT Radiological Reports",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/XREPORT-radiological-reports-generator.git",
-"push": "https://github.com/CTCycle/XREPORT-radiological-reports-generator.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "077efbe",
-"message": "[ahead 1] Add CTCycle portfolio badge to README"
-},
-"main": {
-"current": false,
-"sha": "bf8a756",
-"message": "Merge branch 'develop'"
-}
-},
-"last_commit": {
-"sha": "077efbe",
-"message": "Add CTCycle portfolio badge to README"
-},
-"last_tag": "v2.4.0",
-"last_fetch": "2026-07-07 22:50",
-"ahead": 3,
-"behind": 1,
-"git_status": {
-"is_dirty": false,
-"untracked_count": 0,
-"staged_count": 0,
-"changed_count": 0,
-"conflict_count": 0
-},
-"file_count": 238,
-"commit_count": 639,
-"technologies": [
-"Unknown"
-],
-"readme_description": "XREPORT is a client-server application that generates draft radiological reports from X-ray images. It combines a FastAPI backend and a React frontend to support end-to-end workflows for dataset preparation, model training, validation, and report generation.",
-"gh_slug": "CTCycle/XREPORT-radiological-reports-generator",
-"gh": {
-"createdAt": "2024-01-17T15:12:46Z",
-"description": "Automatic generation of descriptive radiological reports from X-RAY scans",
-"forkCount": 3,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 493316,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 46193,
-"node": {
-"name": "Batchfile"
-}
-},
-{
-"size": 355,
-"node": {
-"name": "HTML"
-}
-},
-{
-"size": 322356,
-"node": {
-"name": "TypeScript"
-}
-},
-{
-"size": 92107,
-"node": {
-"name": "CSS"
-}
-},
-{
-"size": 5024,
-"node": {
-"name": "PowerShell"
-}
-},
-{
-"size": 2050,
-"node": {
-"name": "JavaScript"
-}
-},
-{
-"size": 20045,
-"node": {
-"name": "Rust"
-}
-}
-],
-"name": "XREPORT-radiological-reports-generator",
-"nameWithOwner": "CTCycle/XREPORT-radiological-reports-generator",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 6,
-"updatedAt": "2026-07-07T20:50:27Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "EMADB Autopilot",
-"group": "Dismissed",
-"local_path": "G:\\Projects\\Repositories\\Dismissed projects\\EMADB Autopilot",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/EMADB-Autopilot.git",
-"push": "https://github.com/CTCycle/EMADB-Autopilot.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"main": {
-"current": true,
-"sha": "817a312",
-"message": "Add CTCycle portfolio badge to README"
-}
-},
-"last_commit": {
-"sha": "817a312",
-"message": "Add CTCycle portfolio badge to README"
-},
-"last_tag": "v2.2.0",
-"last_fetch": "2025-12-24 09:54",
-"ahead": 0,
-"behind": 0,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 1,
-"changed_count": 10,
-"conflict_count": 0
-},
-"file_count": 35,
-"commit_count": 203,
-"technologies": [
-"Python"
-],
-"readme_description": "This project aims to develop a framework that autonomously navigates multiple drug-related online resources to retrieve data regarding drugs interactions and EMA drugs adverse reactions reports. Initially designed to browse the EMA database of EudraVigilance (European Database of suspected advers...",
-"gh_slug": "CTCycle/EMADB-Autopilot",
-"gh": {
-"createdAt": "2023-10-30T10:10:33Z",
-"description": "Automated browser to download drug adverse reaction reports from the European Database of Suspected Adverse Reactions Reports (EudraVigilance) ",
-"forkCount": 1,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 42108,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 11963,
-"node": {
-"name": "Batchfile"
-}
-}
-],
-"name": "EMADB-Autopilot",
-"nameWithOwner": "CTCycle/EMADB-Autopilot",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 6,
-"updatedAt": "2026-07-09T22:16:27Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-},
-{
-"display_name": "FeXT AutoEncoder",
-"group": "Dismissed",
-"local_path": "G:\\Projects\\Repositories\\Dismissed projects\\FeXT AutoEncoder",
-"source": "local",
-"remotes": {
-"origin": {
-"fetch": "https://github.com/CTCycle/FEXT-Autoencoder.git",
-"push": "https://github.com/CTCycle/FEXT-Autoencoder.git"
-}
-},
-"default_branch": "main",
-"branches": {
-"develop": {
-"current": true,
-"sha": "fdd8968",
-"message": "fixed python version in .bat file"
-},
-"main": {
-"current": false,
-"sha": "ff401c9",
-"message": "Merge branch 'develop'"
-}
-},
-"last_commit": {
-"sha": "fdd8968",
-"message": "fixed python version in .bat file"
-},
-"last_tag": "",
-"last_fetch": "2025-12-30 09:26",
-"ahead": 36,
-"behind": 0,
-"git_status": {
-"is_dirty": true,
-"untracked_count": 0,
-"staged_count": 1,
-"changed_count": 23,
-"conflict_count": 0
-},
-"file_count": 56,
-"commit_count": 519,
-"technologies": [
-"Python"
-],
-"readme_description": "FeXT AutoEncoder is a desktop-first pipeline for inspecting image datasets, training convolutional autoencoders, exporting latent representations, and inspecting results without leaving a single UI. The application combines a PySide6 + Qt Material interface with a PyTorch/Triton-powered backend t...",
-"gh_slug": "CTCycle/FEXT-Autoencoder",
-"gh": {
-"createdAt": "2023-10-08T15:22:01Z",
-"description": "An autoencoder model to extract features from images and obtain their compressed vector representation, inspired by the convolutional VVG16 architecture",
-"forkCount": 0,
-"homepageUrl": "",
-"isArchived": false,
-"isFork": false,
-"languages": [
-{
-"size": 177747,
-"node": {
-"name": "Python"
-}
-},
-{
-"size": 11962,
-"node": {
-"name": "Batchfile"
-}
-}
-],
-"name": "FEXT-Autoencoder",
-"nameWithOwner": "CTCycle/FEXT-Autoencoder",
-"primaryLanguage": {
-"name": "Python"
-},
-"stargazerCount": 1,
-"updatedAt": "2025-12-30T08:26:07Z",
-"visibility": "PUBLIC"
-},
-"open_prs": []
-}
-]
-};
-
-let currentFilter = 'all';
-let currentSort = 'group';
-
-function init() {
-  document.getElementById('total-repos').textContent = DATA.total_repos;
-  document.getElementById('update-date').textContent = DATA.generated_at;
-
-  // Filter buttons
-  const groups = [...new Set(DATA.repos.map(r => r.group))];
-  const filterDiv = document.getElementById('filter-btns');
-  filterDiv.innerHTML = '<button class="filter-btn active" data-filter="all" onclick="setFilter(\'all\')">All</button>';
-  groups.forEach(g => {
-    const count = DATA.repos.filter(r => r.group === g).length;
-    filterDiv.innerHTML += '<button class="filter-btn" data-filter="' + g + '" onclick="setFilter(\'' + g + '\')">' + g + ' (' + count + ')</button>';
-  });
-  // Add source-based filters
-  filterDiv.innerHTML += '<button class="filter-btn" data-filter="pub" onclick="setFilter(\'pub\')">Public</button>';
-  filterDiv.innerHTML += '<button class="filter-btn" data-filter="dirty" onclick="setFilter(\'dirty\')">Dirty</button>';
-
-  renderStats();
-  renderSections();
-}
-
-function setFilter(filter) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.filter === filter);
-  });
-  filterRepos();
-}
-
-function setSort(sort) {
-  currentSort = sort;
-  document.querySelectorAll('.sort-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.sort === sort);
-  });
-  renderSections();
-}
-
-function filterRepos() {
-  const search = document.getElementById('search').value.toLowerCase();
-  document.querySelectorAll('.card').forEach(card => {
-    const group = card.dataset.group;
-    const text = card.dataset.search.toLowerCase();
-    const isPublic = card.dataset.public === 'true';
-    const isDirty = card.dataset.dirty === 'true';
-
-    let matchesFilter;
-    switch (currentFilter) {
-      case 'all': matchesFilter = true; break;
-      case 'pub': matchesFilter = isPublic; break;
-      case 'dirty': matchesFilter = isDirty; break;
-      default: matchesFilter = group === currentFilter;
-    }
-    const matchesSearch = !search || text.includes(search);
-    card.classList.toggle('hidden', !(matchesFilter && matchesSearch));
-  });
-  document.querySelectorAll('.section').forEach(section => {
-    const visible = section.querySelectorAll('.card:not(.hidden)').length > 0;
-    section.classList.toggle('hidden', !visible);
-  });
-}
-
-function renderStats() {
-  const bar = document.getElementById('stats-bar');
-  const total = DATA.total_repos;
-  const publicCount = DATA.repos.filter(r => {
-    const gh = r.gh || {};
-    return gh.visibility === 'PUBLIC';
-  }).length;
-  const privateCount = DATA.repos.filter(r => {
-    const gh = r.gh || {};
-    return gh.visibility === 'PRIVATE';
-  }).length;
-  const dirtyCount = DATA.repos.filter(r => {
-    const gs = r.git_status || {};
-    return gs.is_dirty;
-  }).length;
-  const allLangs = new Set();
-  DATA.repos.forEach(r => {
-    (r.technologies || []).forEach(t => allLangs.add(t));
-    const gh = r.gh || {};
-    if (gh.primaryLanguage && gh.primaryLanguage.name) allLangs.add(gh.primaryLanguage.name);
-  });
-  const totalStars = DATA.repos.reduce((sum, r) => {
-    const gh = r.gh || {};
-    return sum + (gh.stargazerCount || 0);
-  }, 0);
-  const totalFiles = DATA.repos.reduce((sum, r) => sum + (r.file_count || 0), 0);
-
-  bar.innerHTML =
-    '<div class="stat"><span class="stat-value">' + total + '</span><span class="stat-label">Total Projects</span></div>' +
-    '<div class="stat"><span class="stat-value">' + publicCount + '</span><span class="stat-label">Public</span></div>' +
-    '<div class="stat"><span class="stat-value">' + privateCount + '</span><span class="stat-label">Private</span></div>' +
-    '<div class="stat"><span class="stat-value">' + dirtyCount + '</span><span class="stat-label">Dirty</span></div>' +
-    '<div class="stat"><span class="stat-value">' + allLangs.size + '</span><span class="stat-label">Languages</span></div>' +
-    '<div class="stat"><span class="stat-value">' + totalStars + '</span><span class="stat-label">Stars</span></div>' +
-    '<div class="stat"><span class="stat-value">' + totalFiles.toLocaleString() + '</span><span class="stat-label">Tracked Files</span></div>';
-}
-
-function sortRepos(repos) {
-  switch (currentSort) {
-    case 'name':
-      return repos.sort((a, b) => a.display_name.localeCompare(b.display_name));
-    case 'stars':
-      return repos.sort((a, b) => ((b.gh || {}).stargazerCount || 0) - ((a.gh || {}).stargazerCount || 0));
-    case 'updated':
-      return repos.sort((a, b) => {
-        const da = (a.gh || {}).updatedAt || '';
-        const db = (b.gh || {}).updatedAt || '';
-        return db.localeCompare(da);
-      });
-    case 'group':
-    default:
-      return repos;  // keep group order
-  }
-}
-
-function renderSections() {
-  const container = document.getElementById('sections');
-  const groups = ['Active', 'Data Analysis', 'Dismissed', 'Tools & Config', 'Remote Only'];
-
-  if (currentSort !== 'group') {
-    // Flat layout when sorting
-    const repos = sortRepos([...DATA.repos]);
-    let html = '<div class="section"><div class="section-header"><span class="section-title">All Projects</span></div>';
-    repos.forEach(r => { html += renderCard(r); });
-    html += '</div>';
-    container.innerHTML = html;
-    return;
-  }
-
-  let html = '';
-  groups.forEach(group => {
-    const repos = sortRepos(DATA.repos.filter(r => r.group === group));
-    if (repos.length === 0) return;
-
-    html += '<div class="section">' +
-      '<div class="section-header">' +
-        '<span class="section-title">' + group + '</span>' +
-        '<span class="section-count">' + repos.length + '</span>' +
-      '</div>';
-    repos.forEach(r => { html += renderCard(r); });
-    html += '</div>';
-  });
-
-  container.innerHTML = html;
-}
-
-function renderCard(r) {
-  const gh = r.gh || {};
-  const visibility = gh.visibility || 'unknown';
-  const lang = gh.primaryLanguage || {};
-  const langName = lang.name || '';
-  const langColor = LANG_COLORS[langName] || '#8b949e';
-  const desc = r.readme_description || gh.description || '';
-  const ghUrl = r.gh_slug ? 'https://github.com/' + r.gh_slug : '';
-  const localUrl = r.local_path ? 'file:///' + r.local_path.replace(/\\\\/g, '/').replace(/\\/g, '/').replace(/^([A-Z]):/, (_, d) => d.toLowerCase()) + '/' : '';
-  const updatedAt = gh.updatedAt ? gh.updatedAt.split('T')[0] : '';
-  const stars = gh.stargazerCount || 0;
-  const forks = gh.forkCount || 0;
-  const gs = r.git_status || {};
-  const isDirty = gs.is_dirty || false;
-  const technologies = r.technologies || [];
-  const sourceBadge = r.source === 'remote_only' ? 'remote' : (r.source === 'local_only' ? 'local-only' : '');
-
-  // Build searchable text
-  const searchText = [r.display_name, desc, langName, r.group, r.gh_slug]
-    .concat(technologies).filter(Boolean).join(' ').toLowerCase();
-
-  let html = '<div class="card" data-group="' + r.group + '" data-search="' + escAttr(searchText) +
-    '" data-public="' + (visibility === 'PUBLIC') + '" data-dirty="' + isDirty + '">';
-
-  // Header row
-  html += '<div class="card-header">';
-  html += '<a class="card-name" href="' + (ghUrl || '#') + '" target="_blank" title="Open on GitHub">' + r.display_name + '</a>';
-  html += '<div class="card-badges">';
-
-  // Source badge
-  if (sourceBadge === 'remote') {
-    html += '<span class="badge badge-remote">Remote only</span>';
-  } else if (sourceBadge === 'local-only') {
-    html += '<span class="badge badge-local-only">Local only</span>';
-  }
-
-  // Visibility
-  if (visibility === 'PUBLIC') {
-    html += '<span class="badge badge-public">Public</span>';
-  } else if (visibility === 'PRIVATE') {
-    html += '<span class="badge badge-private">Private</span>';
-  }
-
-  // Language
-  if (langName) {
-    html += '<span class="badge badge-lang" style="background:' + langColor + '">' + langName + '</span>';
-  }
-
-  // Tag
-  if (r.last_tag) {
-    html += '<span class="badge badge-tag">' + r.last_tag + '</span>';
-  }
-
-  // Stars
-  if (stars > 0) {
-    html += '<span class="badge badge-stars">' + stars + ' star' + (stars !== 1 ? 's' : '') + '</span>';
-  }
-
-  // Ahead / behind
-  if (r.ahead > 0) {
-    html += '<span class="badge badge-ahead">+' + r.ahead + ' ahead</span>';
-  }
-  if (r.behind > 0) {
-    html += '<span class="badge badge-behind">-' + r.behind + ' behind</span>';
-  }
-
-  // Dirty / clean
-  if (r.source !== 'remote_only') {
-    if (isDirty) {
-      html += '<span class="badge badge-dirty">Dirty</span>';
-    } else {
-      html += '<span class="badge badge-clean">Clean</span>';
-    }
-  }
-
-  html += '</div></div>';
-
-  // Description
-  if (desc) {
-    html += '<div class="card-desc">' + escHtml(desc) + '</div>';
-  }
-
-  // Details row
-  html += '<div class="card-details">';
-  if (ghUrl) {
-    html += '<span><a href="' + ghUrl + '" target="_blank">' + r.gh_slug + '</a></span>';
-  }
-  if (updatedAt) {
-    html += '<span>Updated ' + updatedAt + '</span>';
-  }
-  if (forks > 0) {
-    html += '<span>' + forks + ' fork' + (forks !== 1 ? 's' : '') + '</span>';
-  }
-  if (r.last_commit && r.last_commit.sha) {
-    html += '<span>Last: ' + r.last_commit.sha.substring(0, 7) + ' ' + escHtml(r.last_commit.message || '').substring(0, 60) + '</span>';
-  }
-  if (r.file_count > 0) {
-    html += '<span>' + r.file_count.toLocaleString() + ' files</span>';
-  }
-  if (r.commit_count > 0) {
-    html += '<span>' + r.commit_count + ' commits</span>';
-  }
-  if (r.last_fetch) {
-    html += '<span>Fetched ' + r.last_fetch + '</span>';
-  }
-  if (localUrl) {
-    html += '<span><a href="' + localUrl + '" target="_blank">Open folder</a></span>';
-  }
-  html += '</div>';
-
-  // Technologies
-  if (technologies.length > 0) {
-    html += '<div class="tech-tags">';
-    technologies.forEach(t => {
-      html += '<span class="tech-tag">' + t + '</span>';
-    });
-    html += '</div>';
-  }
-
-  // Branches
-  const branchNames = Object.keys(r.branches || {});
-  if (branchNames.length > 0) {
-    html += '<div class="branches-list">';
-    branchNames.forEach(b => {
-      const br = r.branches[b];
-      const cls = br.current ? 'branch-tag current' : 'branch-tag';
-      html += '<span class="' + cls + '">' + b + '</span>';
-    });
-    html += '</div>';
-  }
-
-  // Open PRs
-  const prs = r.open_prs || [];
-  if (prs.length > 0) {
-    html += '<div class="branches-list" style="margin-top:4px;padding-top:4px;">';
-    prs.forEach(pr => {
-      html += '<span class="branch-tag" style="color:var(--green);border-color:#2ea043;">' +
-        '<a href="' + ghUrl + '/pull/' + pr.number + '" target="_blank" style="color:inherit;text-decoration:none;">PR #' +
-        pr.number + ': ' + escHtml(pr.title) + '</a></span>';
-    });
-    html += '</div>';
-  }
-
-  html += '</div>';
-  return html;
-}
-
-function escHtml(s) {
-  if (!s) return '';
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-function escAttr(s) {
-  return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-const LANG_COLORS = {
-"Python": "#3572A5",
-"Jupyter Notebook": "#DA5B0B",
-"Jupyter": "#DA5B0B",
-"Rust": "#DEA584",
-"Dart": "#00B4AB",
-"Flutter": "#00B4AB",
-"TypeScript": "#3178C6",
-"JavaScript": "#F7DF1E",
-"HTML": "#E34F26",
-"CSS": "#563D7C",
-"Shell": "#89E051",
-"C": "#555555",
-"C++": "#F34B7D",
-"Go": "#00ADD8",
-"Ruby": "#701516",
-"R": "#198CE7",
-"Java": "#B07219",
-"Kotlin": "#A97BFF",
-"Swift": "#F05138",
-"PHP": "#4F5D95",
-"Docker": "#2496ED",
-"Node.js": "#339933",
-"Batchfile": "#C1F12E",
-"Unknown": "#8b949e"
-};
-
-init();
-</script>
+  </main>
 </body>
 </html>

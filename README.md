@@ -2,100 +2,71 @@
 
 # CTCycle
 
-**ML researcher building clinical and scientific AI tools**
-
-[![Portfolio Catalog](https://img.shields.io/badge/Portfolio-Catalog-58a6ff?style=flat-square)](https://ctcycle.github.io/CTCycle/)
-[![GitHub](https://img.shields.io/badge/GitHub-CTCycle-333?style=flat-square&logo=github)](https://github.com/CTCycle)
-
----
+**ML researcher and data scientist working across clinical and scientific AI**
 
 *Reinforcement learning, medical AI, scientific computing, and LLM tooling*
-</div>
-
----
-
-## 👋 Hey there
-
-Hi, I'm **Thomas** (you'll find me as CTCycle around here). I'm an ML researcher and data scientist building applied AI tools for clinical and scientific workflows. My background is a bit of a winding road: started in biotechnology, picked up a PhD in engineering sciences, and somewhere along the way traded the lab bench for a terminal. Best decision I ever made.
-
-A quick version of the story: bachelor's and master's in Biotechnology from the University of Genoa, then a PhD in Engineering Sciences at the Vrije Universiteit Brussel, where I worked on the **CheckPack** project, developing micro-sensors to detect food spoilage and monitor quality in real time. That project taught me two things: how to design and run real-world experiments, and that I really, really enjoy turning data into something useful. After the PhD, I doubled down on machine learning, and I have been building ML tools ever since.
-
-These days, my work spans reinforcement learning, medical computer vision, LLM-powered clinical copilots, computational chemistry, and whatever interesting intersection of biology and computation comes up next. Everything on this profile is open source, because science should be reproducible and good tools should be accessible.
-
----
-
-## 📊 GitHub Stats
-
-<div align="center">
-
-![CTCycle's GitHub stats](https://github-readme-stats-beta-ten-32.vercel.app/api?username=CTCycle&show_icons=true&theme=shadow_green&count_private=true)
 
 </div>
 
 ---
 
-## 📂 Portfolio
+## Profile
 
-Browse all **18 projects** in the **[HTML Catalog](https://ctcycle.github.io/CTCycle/)** — a searchable, filterable directory with stats, tech tags, and direct links to every repo. If you prefer your projects as floating islands in 3D space, there is a **[3D viewer](https://ctcycle.github.io/CTCycle/3d)** too (yes, each project gets its own island shape).
+I am Thomas Virdis, also known as CTCycle. I build open-source tools for clinical and scientific workflows. My work includes reinforcement learning, medical computer vision, LLM tooling, computational chemistry, and data analysis.
 
-## 🚀 Featured Projects
+I currently work as a Senior Data Scientist and ML Engineer at Inmatica S.p.A. My background combines a bachelor's and master's in Biotechnology from the University of Genoa with a PhD in Engineering Sciences from the Vrije Universiteit Brussel.
+
+During my PhD, I worked on the CheckPack project, developing micro-sensors to detect food spoilage and monitor quality in real time. That experience connected experimental research with data analysis and machine learning.
+
+## Selected Projects
 
 ### FAIRS Roulette Player
-Reinforcement learning (DQN) agent that learns to play roulette. Full-stack application: PyTorch training pipeline + FastAPI backend + React frontend + Tauri desktop shell.
-`Reinforcement Learning` `PyTorch` `React` `Tauri`
+
+Research application for roulette training and inference experiments. It includes a DQN agent, a PyTorch training pipeline, a FastAPI backend, a React frontend, and a Tauri desktop shell.
+
+`Reinforcement learning` `PyTorch` `React` `Tauri`
+
+[Open repository](https://github.com/CTCycle/FAIRS-Roulette-Player)
 
 ### XREPORT Radiological Reports
-Vision-language model that generates descriptive radiology reports from chest X-ray scans. Built on transformer architectures, trained on clinical datasets.
-`Computer Vision` `NLP` `Transformers` `Clinical AI`
+
+Client-server application for generating draft radiological reports from X-ray images. It supports dataset preparation, model training, validation, and report generation.
+
+`Medical AI` `Transformers` `FastAPI` `React`
+
+[Open repository](https://github.com/CTCycle/XREPORT-radiological-reports-generator)
 
 ### ADSMOD Adsorption Modeling
-ML-driven adsorption isotherm fitting and prediction using NIST/ARPA-E databases. Fits theoretical models to empirical data and predicts gas uptake for materials science applications.
-`SciML` `Chemical Engineering` `NIST Databases`
 
-## 📋 All Public Projects
+Application for collecting, managing, and modeling adsorption data. It fits theoretical models to empirical isotherms and works with NIST and ARPA-E datasets.
 
-| Project | Area | Stars | Tech |
-|---------|------|-------|------|
-| [FAIRS Roulette Player](https://github.com/CTCycle/FAIRS-Roulette-Player) | RL | 6 | PyTorch, React, Tauri |
-| [XREPORT Radiological Reports](https://github.com/CTCycle/XREPORT-radiological-reports-generator) | Medical AI | 6 | Python, Transformers |
-| [EMADB Autopilot](https://github.com/CTCycle/EMADB-Autopilot) | Clinical Data | 6 | Browser automation |
-| [ADSMOD Adsorption Modeling](https://github.com/CTCycle/ADSMOD-Adsorption-Modeling) | SciML | 3 | Python, RDKit |
-| [FEXT Autoencoder](https://github.com/CTCycle/FEXT-Autoencoder) | Computer Vision | 1 | PyTorch |
-| [DILIGENT Clinical Copilot](https://github.com/CTCycle/DILIGENT-Clinical-Copilot) | Clinical LLM | 0 | LLM, FastAPI |
-| [TKBEN Tokenizer Benchmarker](https://github.com/CTCycle/TKBEN-tokenizers-benchmarker) | LLM Tools | 0 | Python |
-| [ParaGraph LLM Workflow](https://github.com/CTCycle/ParaGraph-LLM-workflow) | LLM Tools | 0 | React Flow |
-| [AEGIS Geospatial View](https://github.com/CTCycle/AEGIS-Geospatial-View) | Geospatial | 0 | Python, Web |
+`Scientific ML` `Python` `RDKit` `NIST`
 
----
+[Open repository](https://github.com/CTCycle/ADSMOD-Adsorption-Modeling)
 
-## 🛠️ Skills & Tools
+## Skills
 
-| Domain | Technologies |
-|--------|-------------|
-| **Languages** | Python, Java, JavaScript, SQL, Bash |
-| **ML / DL** | PyTorch, TensorFlow, Transformers, HuggingFace, LangChain |
-| **Infrastructure** | Docker, Kubernetes, Linux, GitHub Actions, REST APIs, PostgreSQL |
-| **Scientific** | RDKit, NumPy/SciPy, Pandas, NIST databases, ARPA-E |
-| **Tools** | Git, VS Code, IntelliJ, Postman, Jupyter, CI/CD |
+| Area | Technologies |
+| --- | --- |
+| Languages | Python, Java, JavaScript, SQL, Bash |
+| ML and deep learning | PyTorch, TensorFlow, Transformers, Hugging Face, LangChain |
+| Infrastructure | Docker, Kubernetes, Linux, REST APIs, PostgreSQL |
+| Scientific computing | RDKit, NumPy and SciPy, Pandas, NIST databases, ARPA-E |
+| Workflow | Git, GitHub Actions, Jupyter, VS Code, IntelliJ, Postman, CI/CD |
 
----
+## Experience and Education
 
-## 🔭 Right Now
+- **Now:** Senior Data Scientist and ML Engineer at Inmatica S.p.A., working on applied AI tools for clinical and scientific workflows.
+- **Research:** PhD in Engineering Sciences at the Vrije Universiteit Brussel, including work on the CheckPack micro-sensor project.
+- **Foundation:** Bachelor's and master's studies in Biotechnology at the University of Genoa.
 
-- **Building:** Open source ML tools at the intersection of clinical research and artificial intelligence. RL agents, medical image models, LLM copilots, computational chemistry pipelines.
-- **Learning:** Front-end development (UI/UX is harder than it looks) and productionising ML with Rust.
-- **Looking for:** Interesting collaborations at the crossroads of biotech, healthcare, and machine learning. If you have a project that mixes biology and code, I would love to hear about it.
-- **Ask me about:** Reinforcement learning, medical AI, turning a PhD in biotech into an ML career, or how to get started building things that actually ship.
+## Current Focus
 
----
+- **Building:** Open-source ML tools for clinical research, medical imaging, reinforcement learning, computational chemistry, and LLM workflows.
+- **Learning:** Front-end development and productionizing ML with Rust.
+- **Looking for:** Collaborations involving biotechnology, healthcare, and machine learning.
+- **Ask me about:** Reinforcement learning, medical AI, or moving from biotechnology research into machine learning.
 
-<div align="center">
+## Contact
 
-**Let's connect**
-
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat-square&logo=linkedin)](https://linkedin.com/in/thomasvirdis)
-[![Medium](https://img.shields.io/badge/-Medium-000?style=flat-square&logo=medium)](https://medium.com/@thomasvirdis)
-
-*Part of the [CTCycle portfolio](https://ctcycle.github.io/CTCycle/) - 18 projects, all open source*
-
-</div>
+[LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@thomasvirdis)
