@@ -1,24 +1,16 @@
-<div align="center">
-
 # Thomas Virdis · CTCycle
 
-**Senior Data Scientist &amp; ML Engineer**
+**Senior Data Scientist & ML Engineer**
 
-Building open-source systems where clinical AI, scientific computing, and machine learning meet.
+I build open-source tools where clinical AI, scientific computing and machine learning meet.
 
-[Project catalog](https://ctcycle.github.io/CTCycle/) · [LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@thomasvirdis)
-
-</div>
-
-<p align="center">
-  <code>clinical AI</code> · <code>reinforcement learning</code> · <code>scientific ML</code> · <code>LLM tooling</code>
-</p>
+[LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@ctcycle)
 
 ---
 
 ## About
 
-I am Thomas Virdis, also known as **CTCycle**. I build open-source tools for clinical and scientific workflows, from medical computer vision and clinical copilots to reinforcement-learning experiments, computational chemistry, and local-LLM tooling.
+I am Thomas Virdis, also known as **CTCycle**. I build open-source tools for clinical and scientific workflows, from medical computer vision and clinical copilots to reinforcement-learning experiments, computational chemistry and local-LLM tooling.
 
 My current work is as a Senior Data Scientist and ML Engineer at **Inmatica S.p.A.** My path combines bachelor's and master's studies in Biotechnology at the University of Genoa with a PhD in Engineering Sciences at the Vrije Universiteit Brussel. During my PhD, I worked on **CheckPack**, developing micro-sensors for real-time food-spoilage and quality monitoring.
 
@@ -58,28 +50,23 @@ Four projects that represent the main areas of my engineering work:
 
 ## GitHub activity
 
-These cards show public-repository activity only. GitHub Actions refreshes the repository-owned SVGs daily, so the profile does not depend on a live public stats endpoint at render time.
+These cards cover public repositories only. They are regenerated and committed by this repository's own workflow each day, so the profile does not depend on a live third-party stats endpoint at render time.
 
-<p align="center">
-  <img src="./profile/stats.svg" alt="GitHub public statistics" width="49%">
-  <img src="./profile/top-langs.svg" alt="Most-used programming languages" width="49%">
-</p>
+![GitHub public statistics](./profile/stats.svg)
+
+![Most-used programming languages](./profile/top-langs.svg)
 
 ## Achievements
 
-The Trophy cards are generated from the maintained [GitHub Profile Trophy](https://github.com/ryo-ma/github-profile-trophy) implementation and refreshed by the same repository-owned workflow.
+Trophy cards are generated from the maintained GitHub Profile Trophy implementation and refreshed by the same workflow.
 
-<p align="center">
-  <a href="https://github.com/ryo-ma/github-profile-trophy">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./profile/trophy-dark.svg">
-      <img src="./profile/trophy-light.svg" alt="GitHub Profile Trophy achievements">
-    </picture>
-  </a>
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./profile/trophy-dark.svg">
+  <img src="./profile/trophy-light.svg" alt="GitHub Profile Trophy achievements">
+</picture>
 
 ## Connect
 
 I am always interested in thoughtful collaborations involving biotechnology, healthcare, machine learning, and tools that help research move from experiment to usable software.
 
-[LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@thomasvirdis/) · [Project catalog](https://ctcycle.github.io/CTCycle/)
+[LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@ctcycle)
