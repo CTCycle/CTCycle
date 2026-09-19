@@ -9,7 +9,7 @@
         aria-labelledby="descId"
       >
         <title id="titleId">Thomas Virdis&#39; GitHub Stats, Rank: B+</title>
-        <desc id="descId">Total Stars Earned: 25, Total Commits  (last year) : 4058, Total PRs: 235, Total Issues: 4, Contributed to (last year): 2</desc>
+        <desc id="descId">Total Stars Earned: 25, Total Commits  (last year) : 4060, Total PRs: 236, Total Issues: 4, Contributed to (last year): 2</desc>
         <style>
           .header {
             font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
@@ -73,7 +73,7 @@
         stroke-dashoffset: 251.32741228718345;
       }
       to {
-        stroke-dashoffset: 100.36508964767076;
+        stroke-dashoffset: 100.3044500581216;
       }
     }
   
@@ -181,7 +181,7 @@
         x="224.01"
         y="12.5"
         data-testid="prs"
-      >235</text>
+      >236</text>
     </g>
   </g><g transform="translate(0, 75)">
     <g class="stagger" style="animation-delay: 900ms" transform="translate(25, 0)">
