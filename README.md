@@ -6,7 +6,7 @@ Senior data scientist and ML engineer at Inmatica. I build open-source tools for
 
 ## About
 
-My route here went through the lab: a bachelor's and a master's in biotechnology at the University of Genoa, then a PhD in engineering sciences at the Vrije Universiteit Brussel on CheckPack, micro-sensors for real-time food-spoilage monitoring. Most of what I build now comes out of that experience. Scientific data is messy, and a tool that hides how it reached a number is hard to trust.
+My route here went through the lab: a bachelor's in biotechnology at the University of Genoa, then a master's in advanced biotechnology and a PhD in engineering sciences at the Vrije Universiteit Brussel, where I worked on CheckPack, building machine-learning models for sensor-based food-spoilage detection. Most of what I build now comes out of that experience. Scientific data is messy, and a tool that hides how it reached a number is hard to trust.
 
 Most of the applications below share a shape: a local Python service with an Angular or React interface, and a model that either ships with the app or points at an endpoint you already have.
 
