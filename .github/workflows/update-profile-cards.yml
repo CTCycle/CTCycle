@@ -37,36 +37,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
 
-      - name: Refresh Trophy cards
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          fetch_trophy() {
-            local theme="$1"
-            local output="$2"
-            local query="username=${GITHUB_REPOSITORY_OWNER}&theme=${theme}&row=1&column=7&margin-w=12&no-bg=true&no-frame=true"
-            local mirrors=(
-              "https://trophy.ryglcloud.net/"
-              "https://trophy.benkou.dev/"
-            )
-
-            for mirror in "${mirrors[@]}"; do
-              if curl --fail --silent --show-error --location --retry 3 --retry-all-errors \
-                "${mirror}?${query}" --output "${output}" \
-                && grep -q '<svg' "${output}" \
-                && ! grep -Eiq 'DEPLOYMENT_|Payment required|Something went wrong' "${output}"; then
-                return 0
-              fi
-            done
-
-            echo "Unable to refresh ${output} from the upstream-listed Trophy mirrors." >&2
-            return 1
-          }
-
-          fetch_trophy flat profile/trophy-light.svg
-          fetch_trophy gitdimmed profile/trophy-dark.svg
-
       - name: Commit changed cards
         shell: bash
         run: |
