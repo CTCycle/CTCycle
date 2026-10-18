@@ -1,72 +1,61 @@
 # Thomas Virdis · CTCycle
 
-**Senior Data Scientist & ML Engineer**
-
-I build open-source tools where clinical AI, scientific computing and machine learning meet.
+Senior data scientist and ML engineer at Inmatica. I build open-source tools for clinical and scientific work, usually for people who need the model to run on their own machine instead of behind someone else's API.
 
 [LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@ctcycle)
-
----
 
 ## About
 
-I am Thomas Virdis, also known as **CTCycle**. I build open-source tools for clinical and scientific workflows, from medical computer vision and clinical copilots to reinforcement-learning experiments, computational chemistry and local-LLM tooling.
+My route here went through the lab: a bachelor's and a master's in biotechnology at the University of Genoa, then a PhD in engineering sciences at the Vrije Universiteit Brussel on CheckPack, micro-sensors for real-time food-spoilage monitoring. That background shapes what I look for in software. The data is messy, the answer has to be explainable, and a tool should show its own working instead of hiding it behind a spinner.
 
-My current work is as a Senior Data Scientist and ML Engineer at **Inmatica S.p.A.** My path combines bachelor's and master's studies in Biotechnology at the University of Genoa with a PhD in Engineering Sciences at the Vrije Universiteit Brussel. During my PhD, I worked on **CheckPack**, developing micro-sensors for real-time food-spoilage and quality monitoring.
+Most of the applications below share a shape: a local Python service with an Angular or React interface, and a model that either ships with the app or points at an endpoint you already have.
 
-## Selected work
+## Projects
 
-Four projects that represent the main areas of my engineering work:
+### Clinical and scientific
 
-| Project | Focus | Stack |
-| --- | --- | --- |
-| [FAIRS Roulette Player](https://github.com/CTCycle/FAIRS-Roulette-Player) | A local research workspace for DQN training and inference experiments, with dataset management, checkpoints, metrics, and session workflows. | `PyTorch` `FastAPI` `React` `Tauri` |
-| [XREPORT Radiological Reports](https://github.com/CTCycle/XREPORT-radiological-reports-generator) | A client-server application for preparing datasets, training and validating models, and generating draft reports from X-ray images. | `Medical AI` `Transformers` `FastAPI` `React` |
-| [ADSMOD Adsorption Modeling](https://github.com/CTCycle/ADSMOD-Adsorption-Modeling) | A scientific application for collecting adsorption data, fitting theoretical models, and training predictors from NIST and ARPA-E datasets. | `Python` `RDKit` `NumPy` `Pandas` |
-| [LLMeter Local Benchmarks](https://github.com/CTCycle/LLMeter-local-benchmarks) | A Rust CLI for repeatable benchmarking of local OpenAI-compatible LLM providers, with performance metrics and exportable reports. | `Rust` `LLM evaluation` `CLI` |
+**[DILIGENT Clinical Copilot](https://github.com/CTCycle/DILIGENT-Clinical-Copilot)** `Python` `FastAPI` `Angular`
+Decision support for Drug-Induced Liver Injury review, running on one machine. You enter a case, run an assessment with a local or hosted model, then check the draft against the structured findings, medication timeline and drug-match flags before anyone acts on it.
 
-## Current focus
+**[XREPORT Radiological Reports](https://github.com/CTCycle/XREPORT-radiological-reports-generator)** `PyTorch` `Transformers` `FastAPI` `Angular`
+Generates editable draft radiological reports from X-ray images, and covers the loop around that: dataset preparation, local training and evaluation, side-by-side comparison of several report generators. A research tool, not a diagnostic device.
 
-- **Building:** Open-source ML tools for clinical research, medical imaging, reinforcement learning, computational chemistry, and LLM workflows.
-- **Learning:** Front-end development and productionizing ML with Rust.
-- **Collaborating:** On practical projects at the intersection of biotechnology, healthcare, and machine learning.
-- **Ask me about:** Reinforcement learning, medical AI, or moving from biotechnology research into machine learning.
+**[EMADB Autopilot](https://github.com/CTCycle/EMADB-Autopilot)** `Python` `ChromeDriver`
+Collects adverse drug reaction reports from the EMA's EudraVigilance database by driving the search interface and saving the exports. No longer maintained.
 
-## Toolchain
+**[ADSMOD Adsorption Modeling](https://github.com/CTCycle/ADSMOD-Adsorption-Modeling)** `Python` `PyTorch` `React`
+Adsorption workbench. Fits theoretical isotherm models to experimental data, enriches the material records with PubChem properties, then trains predictors on the NIST and ARPA-E isotherm collections.
 
-| Area | Working stack |
-| --- | --- |
-| Languages | Python, Rust, Java, JavaScript, SQL, Bash |
-| ML and deep learning | PyTorch, TensorFlow, Transformers, Hugging Face, LangChain |
-| Infrastructure | Docker, Kubernetes, Linux, REST APIs, PostgreSQL |
-| Scientific computing | RDKit, NumPy/SciPy, Pandas, NIST databases, ARPA-E |
-| Workflow | Git, GitHub Actions, Jupyter, VS Code, Postman, CI/CD |
+### Model and LLM tooling
 
-## Background
+**[LLMeter](https://github.com/CTCycle/LLMeter-local-benchmarks)** `Rust`
+Single binary CLI for measuring local OpenAI-compatible providers: repeatable benchmark runs, performance scenarios, and Markdown or HTML reports you can hand to someone else.
 
-- **Now:** Senior Data Scientist and ML Engineer at Inmatica S.p.A., working on applied AI tools for clinical and scientific workflows.
-- **Research:** PhD in Engineering Sciences at the Vrije Universiteit Brussel, including the CheckPack micro-sensor project.
-- **Foundation:** Bachelor's and master's studies in Biotechnology at the University of Genoa.
+**[TKBEN](https://github.com/CTCycle/TKBEN-tokenizers-benchmarker)** `Python` `FastAPI` `Angular`
+Compares tokenizers on your own text. Vocabulary, throughput, and whether encode/decode actually preserves the input, with the dashboard exportable as a PDF.
 
-## GitHub activity
+**[ParaGraph](https://github.com/CTCycle/ParaGraph-LLM-workflow)** `Python` `FastAPI` `React Flow`
+Visual workspace for LLM workflows. Wire the steps together as nodes, run the graph, and watch each stage as it executes, which is easier to reason about than a chain of prompts buried in a script.
 
-These cards cover public repositories only. They are regenerated and committed by this repository's own workflow each day, so the profile does not depend on a live third-party stats endpoint at render time.
+**[AEGIS Geospatial View](https://github.com/CTCycle/AEGIS-Geospatial-View)** `Python` `FastAPI` `Angular`
+Geospatial workspace that starts from a question instead of a form. Ask for a place, a set of coordinates or a mapping task, and it assembles the view from the public data sources it has access to.
 
-![GitHub public statistics](./profile/stats.svg)
+### Experiments
 
-![Most-used programming languages](./profile/top-langs.svg)
+**[FAIRS Roulette Player](https://github.com/CTCycle/FAIRS-Roulette-Player)** `PyTorch` `FastAPI` `React`
+Workspace for reinforcement-learning experiments on roulette. Import or generate data, train a DQN agent, save checkpoints, then step through inference sessions and compare each suggestion with what the wheel actually did. The point is to study a stochastic process, not to sell betting advice.
 
-## Achievements
+**[FeXT AutoEncoder](https://github.com/CTCycle/FEXT-Autoencoder)** `PyTorch` `PySide6`
+Desktop pipeline for training convolutional autoencoders over image datasets and exporting the latent vectors, built on a VGG16-style encoder. No longer maintained.
 
-Trophy cards are generated from the maintained GitHub Profile Trophy implementation and refreshed by the same workflow.
+## Toolbox
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./profile/trophy-dark.svg">
-  <img src="./profile/trophy-light.svg" alt="GitHub Profile Trophy achievements">
-</picture>
+Python and Rust for most of the work, TypeScript for the interfaces. PyTorch, Hugging Face Transformers and scikit-learn for the models; FastAPI, SQLAlchemy, SQLite or PostgreSQL, Docker and GitHub Actions around them. On the science side: RDKit, NumPy, pandas, and public databases such as NIST, ARPA-E and PubChem.
 
-## Connect
+## Stats
 
-I am always interested in thoughtful collaborations involving biotechnology, healthcare, machine learning, and tools that help research move from experiment to usable software.
+![Statistics for my public repositories](./profile/stats.svg)
 
-[LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@ctcycle)
+![Most used languages](./profile/top-langs.svg)
+
+Both cards are built by this repository's own workflow and committed as SVG files, so nothing here breaks when a third-party badge service goes offline.
