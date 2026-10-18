@@ -1,12 +1,12 @@
 # Thomas Virdis · CTCycle
 
-Senior data scientist and ML engineer at Inmatica. I build open-source tools for clinical and scientific work, usually for people who need the model to run on their own machine instead of behind someone else's API.
+Senior data scientist and ML engineer at Inmatica. I build open-source tools for clinical and scientific work, mostly local first.
 
 [LinkedIn](https://www.linkedin.com/in/thomas-virdis/) · [Medium](https://medium.com/@ctcycle)
 
 ## About
 
-My route here went through the lab: a bachelor's and a master's in biotechnology at the University of Genoa, then a PhD in engineering sciences at the Vrije Universiteit Brussel on CheckPack, micro-sensors for real-time food-spoilage monitoring. That background shapes what I look for in software. The data is messy, the answer has to be explainable, and a tool should show its own working instead of hiding it behind a spinner.
+My route here went through the lab: a bachelor's and a master's in biotechnology at the University of Genoa, then a PhD in engineering sciences at the Vrije Universiteit Brussel on CheckPack, micro-sensors for real-time food-spoilage monitoring. Most of what I build now comes out of that experience. Scientific data is messy, and a tool that hides how it reached a number is hard to trust.
 
 Most of the applications below share a shape: a local Python service with an Angular or React interface, and a model that either ships with the app or points at an endpoint you already have.
 
@@ -43,7 +43,7 @@ Geospatial workspace that starts from a question instead of a form. Ask for a pl
 ### Experiments
 
 **[FAIRS Roulette Player](https://github.com/CTCycle/FAIRS-Roulette-Player)** `PyTorch` `FastAPI` `React`
-Workspace for reinforcement-learning experiments on roulette. Import or generate data, train a DQN agent, save checkpoints, then step through inference sessions and compare each suggestion with what the wheel actually did. The point is to study a stochastic process, not to sell betting advice.
+Workspace for reinforcement-learning experiments on roulette. Import or generate data, train a DQN agent, save checkpoints, then step through inference sessions and compare each suggestion with what the wheel actually did.
 
 **[FeXT AutoEncoder](https://github.com/CTCycle/FEXT-Autoencoder)** `PyTorch` `PySide6`
 Desktop pipeline for training convolutional autoencoders over image datasets and exporting the latent vectors, built on a VGG16-style encoder. No longer maintained.
@@ -57,5 +57,3 @@ Python and Rust for most of the work, TypeScript for the interfaces. PyTorch, Hu
 ![Statistics for my public repositories](./profile/stats.svg)
 
 ![Most used languages](./profile/top-langs.svg)
-
-Both cards are built by this repository's own workflow and committed as SVG files, so nothing here breaks when a third-party badge service goes offline.
