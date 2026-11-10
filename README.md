@@ -6,7 +6,7 @@
 
 # Thomas Virdis · CTCycle
 
-Senior data scientist and ML engineer at Inmatica, where I work on neural signal analysis for clinical research. The repositories here are the smaller version of the same job: a question about the data, and a tool that would answer it faster than doing the work by hand.
+Senior data scientist and ML engineer at Inmatica. Most of my week is clinical and biological data: neural signals, sleep monitoring funded by the Italian space agency, and text buried in hospital documents. The repositories here are that work at a smaller scale: a question about the data, and a tool that would answer it faster by hand.
 
 ## About
 
